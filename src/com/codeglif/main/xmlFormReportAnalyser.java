@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by diogo on 19-10-2015.
  */
-public class xmlFormReportAnalyser {
+public class XmlFormReportAnalyser {
 
 
     private NodeList formsListToParse;
