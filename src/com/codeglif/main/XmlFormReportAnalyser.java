@@ -16,7 +16,7 @@ public class XmlFormReportAnalyser {
     private NodeList formsListToParse;
     private HashMap<String, String> formList = new HashMap<>();
 
-    public xmlFormReportAnalyser(NodeList formsListToParse){
+    public XmlFormReportAnalyser(NodeList formsListToParse){
         this.formsListToParse = formsListToParse;
 
     }

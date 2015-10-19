@@ -1,0 +1,27 @@
+Items necessarios processar
+	-Block
+	-Novos Items
+	-Actions
+
+Na tag <New> descartar 'newOperation' que tenham 'AUDIT_TRAIL' no 'name'.
+
+
+---------------------------------------------------------------------------
+Output:
+
+todas as propriedades sao totais de cada form
+
+Diferencas Estruturais
+	novo item
+	novo bloco
+	novo canvas
+	novo lov
+	dif de propriedades (entre <diff1><diff2>)
+	
+Diferencas Operacionais
+	
+	operacoes modificadas
+	
+----------------------------------------------------------------------------
+
+form exemplo do report com quase todas as situacoes - $\ffiadjl_FRM.xfmb

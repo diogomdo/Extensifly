@@ -23,7 +23,7 @@ public class ExtensifyMain {
             doc.getDocumentElement().normalize();
             NodeList nList = doc.getElementsByTagName("Difference");
 
-            xmlFormReportAnalyser formProcessing = new xmlFormReportAnalyser(nList);
+            XmlFormReportAnalyser formProcessing = new XmlFormReportAnalyser(nList);
             formProcessing.formListProcessor();
 
         }catch(Exception e){
