@@ -7,9 +7,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 
-/**
- * Created by diogo on 17-10-2015.
- */
 public class ExtensifyMain {
     public static void main(String argv[]){
 
@@ -21,9 +18,8 @@ public class ExtensifyMain {
             Document doc = dBuilder.parse(diffsXML);
 
             doc.getDocumentElement().normalize();
-            NodeList nList = doc.getElementsByTagName("Difference");
-
-            XmlFormReportAnalyser formProcessing = new XmlFormReportAnalyser(nList);
+            
+            XmlFormReportAnalyser formProcessing = new XmlFormReportAnalyser(doc);
             formProcessing.formListProcessor();
 
         }catch(Exception e){
