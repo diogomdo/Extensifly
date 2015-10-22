@@ -20,7 +20,7 @@ public class ExtensifyMain {
             doc.getDocumentElement().normalize();
             
             XmlFormReportAnalyser formProcessing = new XmlFormReportAnalyser(doc);
-            formProcessing.formListProcessor();
+            formProcessing.mainReportProcessor();
 
         }catch(Exception e){
             e.printStackTrace();

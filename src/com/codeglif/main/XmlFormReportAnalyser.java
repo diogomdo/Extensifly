@@ -12,38 +12,60 @@ import java.util.Map;
 public class XmlFormReportAnalyser {
 
 	// http://www.drdobbs.com/jvm/easy-dom-parsing-in-java/231002580
-	
-    private NodeList formsListToParse;
+	//http://www.javaspecialists.eu/archive/Issue163.html
+
     private Document root;
-    private String formName;
-    private HashMap<String, FormChanges> formList = new HashMap<>();
+    private Integer totalExtForms;
+    private HashMap<String, FormChangesFacts> formExtList = new HashMap<>();
 
     public XmlFormReportAnalyser(Document doc){
         this.root = doc;
     }
-
-    public void startProcess(){
+    
+    public void mainReportProcessor(){
     	
+    	NodeList differenceList = root.getChildNodes();
+    	NodeList differenceMainNode = (NodeList) getNode("Differences", root.getChildNodes());
+//    	totalExtForms = getNodeSize("Difference",differenceMainNode.getChildNodes());
+//    	NodeList DifferenceNodeList = (NodeList) getNode("Difference",differenceMainNode.getChildNodes());
+//    	System.out.println("nr forms to extend: " +totalExtForms);
+    	
+    	for (int i = 0; i<differenceMainNode.getLength(); i++){
+    		Node currentNode = differenceMainNode.item(i);
+    		if (currentNode.getNodeName() == "Difference")
+    		{
+    			formListProcessor(currentNode);
+    		}
+    	}
+    	
+//    	formListProcessor(differenceMainNode);
     }
     
-    public void formListProcessor(){
+    public void formListProcessor(Node differenceMainNode){
     	
-//    	NodeList differenceList = root.getElementsByTagName("Difference");
-    	NodeList differenceList = root.getChildNodes();
-//    	NodeList newList = root.getElementsByTagName("New");
-
-    	Node differenceMainNode = getNode("Differences", differenceList);
+    	//TODO
+    	//change variable names for something more intuitive
+    	//for the navigation beetween nodes like "onDifferenceNode"
+    	
+//    	NodeList differenceList = root.getChildNodes();
+//    	Node differenceMainNode = getNode("Differences", differenceList);
+    	
     	Node differenceNode = getNode("Difference", differenceMainNode.getChildNodes());
-
-    	getNodeAttr("target", differenceNode);
     	
-    	Node newNode = getNode("New", differenceNode.getChildNodes());
-    	newNode.getChildNodes().getLength();
-    	Node n = getNode("NewOperation", newNode.getChildNodes());
-    	NodeList a = n.getChildNodes();
+    	ParseProcessorFactory parseProcessorFactory = new ParseProcessorFactory();
+    	String formName = parseProcessorFactory.getName(getNodeAttr("target", differenceNode));
     	
-    	//TODO 
-    	//create function to get number of elements of node
+    	formExtList.put(formName,new FormChangesFacts(formName));
+    	
+    	Node newTagNode = getNode("New", differenceNode.getChildNodes());
+    	formExtList.get(formName).setTotalNewOp(getNodeSize("NewOperation", newTagNode.getChildNodes()));
+    	
+    	//Node newTagNodeTagNode = getNode("NewOperation", newTagNode.getChildNodes());
+    	Node newOperationDiffTagNode = getNode("Diff", differenceNode.getChildNodes());
+    	formExtList.get(formName).setTotalOperationalDiff(getNodeSize("OperationDiff",newOperationDiffTagNode.getChildNodes()));
+    	formExtList.get(formName).setTotalStructuralDiff(getNodeSize("StructuralDiff",newOperationDiffTagNode.getChildNodes()));
+    	
+    	formExtList.get(formName).getAllFormFacts();
     }
     
     protected String getNodeAttr(String attrName, Node node ) {
@@ -68,9 +90,16 @@ public class XmlFormReportAnalyser {
         return null;
     }
     
-    public String getParsedName(String formName){
-    	String[] formNamesplitted = formName.split("\\\\");
-    	String formNameParsed = formNamesplitted[formNamesplitted.length-1].toString();
-		return formNameParsed.replace(".xfmb", "");
-    }
+    protected Integer getNodeSize(String tagName, NodeList nodes){
+    	int count = 0;
+    	for ( int x = 0; x < nodes.getLength(); x++ ) {
+	        Node node = nodes.item(x);
+	        if (node.getNodeName().equalsIgnoreCase(tagName)) {
+	        	count +=1;
+	        }
+    	}
+    	return count;
+	}
+    
+    
 }
