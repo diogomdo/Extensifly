@@ -7,4 +7,12 @@ public class ParseProcessorFactory {
     	String formNameParsed = formNamesplitted[formNamesplitted.length-1].toString();
 		return formNameParsed.replace(".xfmb", "");
     }
+	
+	protected Boolean getNewOpValid(String nodeAttr){
+		if (nodeAttr.contains("$") || nodeAttr.contains("AUDIT")){
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

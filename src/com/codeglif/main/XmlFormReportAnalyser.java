@@ -6,8 +6,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import sun.org.mozilla.javascript.GeneratedClassLoader;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,23 +47,22 @@ public class XmlFormReportAnalyser {
     	//change variable names for something more intuitive
     	//for the navigation beetween nodes like "onDifferenceNode"
     	
-//    	NodeList differenceList = root.getChildNodes();
-//    	Node differenceMainNode = getNode("Differences", differenceList);
-    	
-    	//Node differenceNode = getNode("Difference", differenceMainNode.getChildNodes());
-    	
     	ParseProcessorFactory parseProcessorFactory = new ParseProcessorFactory();
     	String formName = parseProcessorFactory.getName(getNodeAttr("target", differenceNode));
     	
-    	formExtList.put(formName,new FormChangesFacts(formName));
+    	FormChangesFacts formChangesFacts = new FormChangesFacts();
+    	//formExtList.put(formName,new FormChangesFacts(formName));
     	
     	Node newTagNode = getNode("New", differenceNode.getChildNodes());
-    	formExtList.get(formName).setTotalNewOp(getNodeSize("NewOperation", newTagNode.getChildNodes()));
-    	
-    	//Node newTagNodeTagNode = getNode("NewOperation", newTagNode.getChildNodes());
+    	if (newTagNode != null){
+    		formChangesFacts.setTotalNewOp(getTotalNewOp(newTagNode));
+    	}
+
     	Node newOperationDiffTagNode = getNode("Diff", differenceNode.getChildNodes());
-    	formExtList.get(formName).setTotalOperationalDiff(getNodeSize("OperationDiff",newOperationDiffTagNode.getChildNodes()));
-    	formExtList.get(formName).setTotalStructuralDiff(getNodeSize("StructuralDiff",newOperationDiffTagNode.getChildNodes()));
+    	if (newOperationDiffTagNode != null){
+	    	formExtList.get(formName).setTotalOperationalDiff(getNodeSize("OperationDiff",newOperationDiffTagNode.getChildNodes()));
+	    	formExtList.get(formName).setTotalStructuralDiff(getNodeSize("StructuralDiff",newOperationDiffTagNode.getChildNodes()));
+    	}
     	
     	formExtList.get(formName).getAllFormFacts();
     }
@@ -102,6 +99,22 @@ public class XmlFormReportAnalyser {
     	}
     	return count;
 	}
+    
+    protected Integer getNewOpNodeSize(String tagName, NodeList nodes){
+    	int count = 0;
+    	for ( int x = 0; x < nodes.getLength(); x++ ) {
+	        Node node = nodes.item(x);
+	        if (node.getNodeName().equalsIgnoreCase(tagName) || ParseProcessorFactory.this.getNewOpValid(node.getAttributes().getNamedItem("name").getNodeValue()) ){
+	        	count +=1;
+	        }
+    	}
+    	return count;
+	}
+    
+    protected Integer getTotalNewOp(Node newTagNode){
+    	return getNewOpNodeSize("NewOperation", newTagNode.getChildNodes());
+    	
+    }
     
     
 }

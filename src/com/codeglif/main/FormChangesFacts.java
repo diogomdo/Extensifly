@@ -10,11 +10,8 @@ public class FormChangesFacts{
 	private Integer totalStructuralDiff = 0;
 	private HashMap<String, Integer> structDiff;
 	
-	public FormChangesFacts(String name){
-		this.formName = name;
+	public FormChangesFacts(){
 	}
-	
-	
 	
 	public String getFormName() {
 		return formName;
