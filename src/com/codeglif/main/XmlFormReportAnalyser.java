@@ -6,6 +6,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import sun.org.mozilla.javascript.GeneratedClassLoader;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +34,7 @@ public class XmlFormReportAnalyser {
     	
     	for (int i = 0; i<differenceMainNode.getLength(); i++){
     		Node currentNode = differenceMainNode.item(i);
-    		if (currentNode.getNodeName() == "Difference")
+    		if (currentNode.getNodeName() == "Difference" && currentNode.getNodeType()==Node.ELEMENT_NODE)
     		{
     			formListProcessor(currentNode);
     		}
@@ -41,7 +43,7 @@ public class XmlFormReportAnalyser {
 //    	formListProcessor(differenceMainNode);
     }
     
-    public void formListProcessor(Node differenceMainNode){
+    public void formListProcessor(Node differenceNode){
     	
     	//TODO
     	//change variable names for something more intuitive
@@ -50,7 +52,7 @@ public class XmlFormReportAnalyser {
 //    	NodeList differenceList = root.getChildNodes();
 //    	Node differenceMainNode = getNode("Differences", differenceList);
     	
-    	Node differenceNode = getNode("Difference", differenceMainNode.getChildNodes());
+    	//Node differenceNode = getNode("Difference", differenceMainNode.getChildNodes());
     	
     	ParseProcessorFactory parseProcessorFactory = new ParseProcessorFactory();
     	String formName = parseProcessorFactory.getName(getNodeAttr("target", differenceNode));
