@@ -9,8 +9,8 @@ import java.io.File;
 
 public class ExtensifyMain {
     public static void main(String argv[]){
-
-        try{
+        
+    	try{
 
             File diffsXML = new File("./ReportSample/ExtensibilityInspector.finance_sc_xfmb.20150930101230.diffs.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

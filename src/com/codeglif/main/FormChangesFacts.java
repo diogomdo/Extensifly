@@ -46,11 +46,11 @@ public class FormChangesFacts{
 
 	public void getAllFormFacts(){
 		
-		System.out.println(this.formName);
-		System.out.println(this.totalNewOp);
-		System.out.println(this.totalOperationalDiff);
-		System.out.println(this.totalStructuralDiff);
-		System.out.println(this.structDiff);
+		System.out.println("FORM: "+ this.formName);
+		System.out.println("New Operations: "+this.getTotalNewOp());
+		System.out.println("Opperation Diffs: "+this.getTotalOperationalDiff());
+		System.out.println("Structural Diffs: "+this.getTotalStructuralDiff()+"\n");
+		
 	}
 	
 	

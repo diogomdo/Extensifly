@@ -17,18 +17,18 @@ public class XmlFormReportAnalyser {
     private Document root;
     private Integer totalExtForms;
     private HashMap<String, FormChangesFacts> formExtList = new HashMap<>();
+    
+    private ParseProcessorFactory parseProcessorFactory;
 
     public XmlFormReportAnalyser(Document doc){
-        this.root = doc;
+    	this.parseProcessorFactory = new ParseProcessorFactory();
+    	this.root = doc;
     }
     
     public void mainReportProcessor(){
     	
     	NodeList differenceList = root.getChildNodes();
     	NodeList differenceMainNode = (NodeList) getNode("Differences", root.getChildNodes());
-//    	totalExtForms = getNodeSize("Difference",differenceMainNode.getChildNodes());
-//    	NodeList DifferenceNodeList = (NodeList) getNode("Difference",differenceMainNode.getChildNodes());
-//    	System.out.println("nr forms to extend: " +totalExtForms);
     	
     	for (int i = 0; i<differenceMainNode.getLength(); i++){
     		Node currentNode = differenceMainNode.item(i);
@@ -46,22 +46,20 @@ public class XmlFormReportAnalyser {
     	//TODO
     	//change variable names for something more intuitive
     	//for the navigation beetween nodes like "onDifferenceNode"
-    	
-    	ParseProcessorFactory parseProcessorFactory = new ParseProcessorFactory();
     	String formName = parseProcessorFactory.getName(getNodeAttr("target", differenceNode));
-    	
-    	FormChangesFacts formChangesFacts = new FormChangesFacts();
-    	//formExtList.put(formName,new FormChangesFacts(formName));
+
+    	formExtList.put(formName,new FormChangesFacts());
+    	formExtList.get(formName).setFormName(formName);
     	
     	Node newTagNode = getNode("New", differenceNode.getChildNodes());
     	if (newTagNode != null){
-    		formChangesFacts.setTotalNewOp(getTotalNewOp(newTagNode));
+    		formExtList.get(formName).setTotalNewOp(getTotalNewOp(newTagNode));
     	}
 
-    	Node newOperationDiffTagNode = getNode("Diff", differenceNode.getChildNodes());
-    	if (newOperationDiffTagNode != null){
-	    	formExtList.get(formName).setTotalOperationalDiff(getNodeSize("OperationDiff",newOperationDiffTagNode.getChildNodes()));
-	    	formExtList.get(formName).setTotalStructuralDiff(getNodeSize("StructuralDiff",newOperationDiffTagNode.getChildNodes()));
+    	Node diffTagNode = getNode("Diff", differenceNode.getChildNodes());
+    	if (diffTagNode != null){
+	    	formExtList.get(formName).setTotalOperationalDiff(getOpperationalDiff(diffTagNode));
+	    	formExtList.get(formName).setTotalStructuralDiff(getStructuralDiff(diffTagNode));
     	}
     	
     	formExtList.get(formName).getAllFormFacts();
@@ -104,8 +102,10 @@ public class XmlFormReportAnalyser {
     	int count = 0;
     	for ( int x = 0; x < nodes.getLength(); x++ ) {
 	        Node node = nodes.item(x);
-	        if (node.getNodeName().equalsIgnoreCase(tagName) || ParseProcessorFactory.this.getNewOpValid(node.getAttributes().getNamedItem("name").getNodeValue()) ){
-	        	count +=1;
+	        if (node.getNodeName().equalsIgnoreCase(tagName) ){
+	        	if (parseProcessorFactory.getNewOpValid(node.getAttributes().getNamedItem("name").getNodeValue())){
+	        		count +=1;
+	        	}
 	        }
     	}
     	return count;
@@ -116,5 +116,34 @@ public class XmlFormReportAnalyser {
     	
     }
     
+    protected Integer getOpperationalDiff(Node newTagNode){
+    	return getOpperationalDiffSize("OperationDiff", newTagNode.getChildNodes());
+    	
+    }
+    protected Integer getOpperationalDiffSize(String tagName, NodeList nodes){
+    	int count = 0;
+    	for ( int x = 0; x < nodes.getLength(); x++ ) {
+    		 Node node = nodes.item(x);
+    		 if (node.getNodeName().equalsIgnoreCase(tagName) ){
+    			 count +=1;
+    		 }
+    	}    	
+    	return count;
+    }
+    
+    protected Integer getStructuralDiff(Node newTagNode){
+    	return getStructuralDiffSize("StructuralDiff", newTagNode.getChildNodes());
+    	
+    }
+    protected Integer getStructuralDiffSize(String tagName, NodeList nodes){
+    	int count = 0;
+    	for ( int x = 0; x < nodes.getLength(); x++ ) {
+    		 Node node = nodes.item(x);
+    		 if (node.getNodeName().equalsIgnoreCase(tagName) ){
+    			 count +=1;
+    		 }
+    	}    	
+    	return count;
+    }
     
 }
