@@ -6,8 +6,17 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.codeglif.main.diff_match_patch.Diff;
+import com.codeglif.main.diff_match_patch.LinesToCharsResult;
+import com.sun.xml.internal.ws.util.StringUtils;
+
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.*;
+//import name.fraser.neil.plaintext.*;
 
 public class XmlFormReportAnalyser {
 
@@ -112,15 +121,14 @@ public class XmlFormReportAnalyser {
 	}
     
     protected Integer getTotalNewOp(Node newTagNode){
-    	return getNewOpNodeSize("NewOperation", newTagNode.getChildNodes());
-    	
+    	return getNewOpNodeSize("NewOperation", newTagNode.getChildNodes());	
     }
     
     protected Integer getOpperationalDiff(Node newTagNode){
     	return getOpperationalDiffSize("OperationDiff", newTagNode.getChildNodes());
-    	
     }
-    protected Integer getOpperationalDiffSize(String tagName, NodeList nodes){
+   
+    protected Integer getStructuralDiffSize(String tagName, NodeList nodes){
     	int count = 0;
     	for ( int x = 0; x < nodes.getLength(); x++ ) {
     		 Node node = nodes.item(x);
@@ -132,18 +140,67 @@ public class XmlFormReportAnalyser {
     }
     
     protected Integer getStructuralDiff(Node newTagNode){
-    	return getStructuralDiffSize("StructuralDiff", newTagNode.getChildNodes());
-    	
+    	return getStructuralDiffSize("StructuralDiff", newTagNode.getChildNodes());	
     }
-    protected Integer getStructuralDiffSize(String tagName, NodeList nodes){
+    
+    protected Integer getOpperationalDiffSize(String tagName, NodeList nodes){
     	int count = 0;
+    	String File1 = "";
+    	String File2 = "";
+    	
+    	System.out.println(nodes.getLength());
     	for ( int x = 0; x < nodes.getLength(); x++ ) {
     		 Node node = nodes.item(x);
-    		 if (node.getNodeName().equalsIgnoreCase(tagName) ){
-    			 count +=1;
+    		 if (node.getNodeName().equalsIgnoreCase(tagName)){
+    			 NodeList diffsNode = (NodeList)node.getChildNodes();
+    			 
+				 if(getNode("Statement",(NodeList)getNode("File1", diffsNode)).hasAttributes()){
+					File1 = getNode("Statement",getNode("File1", diffsNode).getChildNodes()).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+				 }
+				 if(getNode("Statement",(NodeList)getNode("File2", diffsNode)).hasAttributes()){
+					File2 = getNode("Statement",getNode("File2", diffsNode).getChildNodes()).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+				 }
+				 
+				 if(!File1.isEmpty() && !File2.isEmpty()){
+					 if(statementsCompare(File1, File2)){
+						 count +=1;
+					 };
+				 }
     		 }
-    	}    	
+    	}   
+    	System.out.println(count);
     	return count;
     }
+    
+	protected Boolean statementsCompare(String File1, String File2){
+		
+		diff_lineMode(File1, File2);
+    	
+    	if (org.apache.commons.lang3.StringUtils.getLevenshteinDistance(File1, File2) < 4){
+    		return false;
+        	
+    	}else{
+    		return true;
+    	}
+	
+    	    	
+    }
+	
+	protected LinesToCharsResult diff_lineMode(String File1, String File2) {
+		  diff_match_patch dmp = new diff_match_patch();
+		  
+		  LinesToCharsResult dmp1 = dmp.diff_linesToChars(File1, File2);  
+		  
+		  LinesToCharsResult a = dmp.diff_linesToChars(File1, File2);
+		  String lineText1 = a.lineArray.get(0);
+		  String lineText2 = a.lineArray.get(1);
+		  String lineArray = a.lineArray.get(2);
+//
+		  LinkedList<Diff> diffs = dmp.diff_main(lineText1, lineText2, false);
+//
+		  dmp.diff_charsToLines(diffs, a.lineArray);
+		  
+		  return dmp1;
+		}
     
 }
