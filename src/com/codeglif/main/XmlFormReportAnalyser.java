@@ -15,8 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.*;
-//import name.fraser.neil.plaintext.*;
+import org.apache.commons.lang3.StringUtils.*;
 
 public class XmlFormReportAnalyser {
 
@@ -68,7 +67,7 @@ public class XmlFormReportAnalyser {
     	Node diffTagNode = getNode("Diff", differenceNode.getChildNodes());
     	if (diffTagNode != null){
 	    	formExtList.get(formName).setTotalOperationalDiff(getOpperationalDiff(diffTagNode));
-	    	formExtList.get(formName).setTotalStructuralDiff(getStructuralDiff(diffTagNode));
+//	    	formExtList.get(formName).setTotalStructuralDiff(getStructuralDiff(diffTagNode));
     	}
     	
     	formExtList.get(formName).getAllFormFacts();
@@ -124,10 +123,10 @@ public class XmlFormReportAnalyser {
     	return getNewOpNodeSize("NewOperation", newTagNode.getChildNodes());	
     }
     
-    protected Integer getOpperationalDiff(Node newTagNode){
-    	return getOpperationalDiffSize("OperationDiff", newTagNode.getChildNodes());
+    protected Integer getStructuralDiff(Node newTagNode){
+    	return getStructuralDiffSize("StructuralDiff", newTagNode.getChildNodes());	
     }
-   
+    
     protected Integer getStructuralDiffSize(String tagName, NodeList nodes){
     	int count = 0;
     	for ( int x = 0; x < nodes.getLength(); x++ ) {
@@ -139,14 +138,24 @@ public class XmlFormReportAnalyser {
     	return count;
     }
     
-    protected Integer getStructuralDiff(Node newTagNode){
-    	return getStructuralDiffSize("StructuralDiff", newTagNode.getChildNodes());	
+    protected Integer getOpperationalDiff(Node newTagNode){
+    	return getOpperationalDiffSize("OperationDiff", newTagNode.getChildNodes());
     }
+   
     
     protected Integer getOpperationalDiffSize(String tagName, NodeList nodes){
     	int count = 0;
     	String File1 = "";
     	String File2 = "";
+    	
+    	/*
+    	 *WARNING!
+    	 *Xplodes if there is more than one diff in the correspondent node
+    	 *eg. <File1> has 2 or more modifications so there are 2 or more
+    	 *new nodes.
+    	 *Confirm if is necessary to save order of nodes for further comparisson
+    	 *
+    	 */
     	
     	System.out.println(nodes.getLength());
     	for ( int x = 0; x < nodes.getLength(); x++ ) {
@@ -171,36 +180,26 @@ public class XmlFormReportAnalyser {
     	System.out.println(count);
     	return count;
     }
-    
-	protected Boolean statementsCompare(String File1, String File2){
+	
+	protected Boolean statementsCompare(String lineFile1, String lineFile2) {
 		
-		diff_lineMode(File1, File2);
-    	
-    	if (org.apache.commons.lang3.StringUtils.getLevenshteinDistance(File1, File2) < 4){
-    		return false;
-        	
-    	}else{
-    		return true;
-    	}
-	
-    	    	
-    }
-	
-	protected LinesToCharsResult diff_lineMode(String File1, String File2) {
-		  diff_match_patch dmp = new diff_match_patch();
-		  
-		  LinesToCharsResult dmp1 = dmp.diff_linesToChars(File1, File2);  
-		  
-		  LinesToCharsResult a = dmp.diff_linesToChars(File1, File2);
-		  String lineText1 = a.lineArray.get(0);
-		  String lineText2 = a.lineArray.get(1);
-		  String lineArray = a.lineArray.get(2);
-//
-		  LinkedList<Diff> diffs = dmp.diff_main(lineText1, lineText2, false);
-//
-		  dmp.diff_charsToLines(diffs, a.lineArray);
-		  
-		  return dmp1;
+		String eval = "";
+		Boolean diffIsNumb = false;
+		
+		diff_match_patch dmp = new diff_match_patch();  
+		LinkedList<Diff> dmplinesResult = dmp. diff_main(lineFile1, lineFile2);  
+		for(int x = 0; x < dmplinesResult.size(); x++){
+			if(dmplinesResult.get(x).operation.name().equals("DELETE")){
+				eval = dmplinesResult.get(x).text.toString();
+				diffIsNumb = org.apache.commons.lang3.StringUtils.isNumeric(eval);
+				break;
+			}
 		}
-    
+			
+		if (diffIsNumb || eval.length() <= 4){
+			return false;
+		}else{
+		  return true;
+		}   
+	}
 }
