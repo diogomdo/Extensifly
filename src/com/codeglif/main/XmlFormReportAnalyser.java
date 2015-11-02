@@ -45,15 +45,13 @@ public class XmlFormReportAnalyser {
     			formListProcessor(currentNode);
     		}
     	}
-    	
-//    	formListProcessor(differenceMainNode);
     }
     
     public void formListProcessor(Node differenceNode){
     	
     	//TODO
     	//change variable names for something more intuitive
-    	//for the navigation beetween nodes like "onDifferenceNode"
+    	//for the navigation between nodes like "onDifferenceNode"
     	String formName = parseProcessorFactory.getName(getNodeAttr("target", differenceNode));
 
     	formExtList.put(formName,new FormChangesFacts());
@@ -144,40 +142,50 @@ public class XmlFormReportAnalyser {
    
     
     protected Integer getOpperationalDiffSize(String tagName, NodeList nodes){
+    	
     	int count = 0;
-    	String File1 = "";
-    	String File2 = "";
+    	int currentNodeSize = 0;
+    	
+    	currentNodeSize = getNodeSize(tagName, nodes);
     	
     	/*
-    	 *WARNING!
-    	 *Xplodes if there is more than one diff in the correspondent node
-    	 *eg. <File1> has 2 or more modifications so there are 2 or more
-    	 *new nodes.
-    	 *Confirm if is necessary to save order of nodes for further comparisson
-    	 *
+    	 * TODO
+    	 * It is possible to abstract way more
+    	 * the node navigation.
+    	 * Encapsulate much more code.
     	 */
     	
-    	System.out.println(nodes.getLength());
     	for ( int x = 0; x < nodes.getLength(); x++ ) {
     		 Node node = nodes.item(x);
-    		 if (node.getNodeName().equalsIgnoreCase(tagName)){
+    		 if (node.getNodeType()==Node.ELEMENT_NODE){
     			 NodeList diffsNode = (NodeList)node.getChildNodes();
-    			 
-				 if(getNode("Statement",(NodeList)getNode("File1", diffsNode)).hasAttributes()){
-					File1 = getNode("Statement",getNode("File1", diffsNode).getChildNodes()).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
-				 }
-				 if(getNode("Statement",(NodeList)getNode("File2", diffsNode)).hasAttributes()){
-					File2 = getNode("Statement",getNode("File2", diffsNode).getChildNodes()).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
-				 }
 				 
-				 if(!File1.isEmpty() && !File2.isEmpty()){
-					 if(statementsCompare(File1, File2)){
-						 count +=1;
-					 };
-				 }
+    			 if (getNodeSize("Statement",(NodeList)getNode("File1", diffsNode)) == getNodeSize("Statement",(NodeList)getNode("File2", diffsNode))){
+    				 for (int w = 0; w < getNode("File1", diffsNode).getChildNodes().getLength(); w++){
+    					 String File1 = "";
+    					 String File2 = "";
+    					 if ( getNode("File1", diffsNode).getChildNodes().item(w).getNodeType() == Node.ELEMENT_NODE){
+    						 File1 = getNode("File1", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+    						 File2 = getNode("File2", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+    					 }
+    					 if(!File1.isEmpty() && !File2.isEmpty()){
+    						 if(statementsCompare(File1, File2)){
+    							 count +=1;
+    						 }
+    					 } 
+    				 }
+	    		 }else{
+	    			 /*
+	    			  * TODO
+	    			  * This condition needs to be worked.
+	    			  * Encapsulate all the new operation types and
+	    			  * further analysis is needed.
+	    			  * There are three situations possible, they are noted.
+	    			  */
+	    			 count +=1;
+	    		 }
     		 }
-    	}   
-    	System.out.println(count);
+    	}
     	return count;
     }
 	

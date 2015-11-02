@@ -9,10 +9,10 @@ public class ParseProcessorFactory {
     }
 	
 	protected Boolean getNewOpValid(String nodeAttr){
-		if (nodeAttr.contains("$") || nodeAttr.contains("AUDIT")){
-			return true;
-		}else{
+		if ((nodeAttr.contains("$") && nodeAttr.contains("CLASS")) || nodeAttr.contains("AUDIT")){
 			return false;
+		}else{
+			return true;
 		}
 	}
 }
