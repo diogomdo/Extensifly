@@ -153,11 +153,17 @@ public class XmlFormReportAnalyser {
     	 * It is possible to abstract way more
     	 * the node navigation.
     	 * Encapsulate much more code.
+    	 * 
+    	 * TODO
+    	 * How to deal with node <RemovedOperation>
+    	 * for now will be ignored
+    	 * in the evaluation will discard everyone 
+    	 * excpet <OperationDiff>
     	 */
     	
-    	for ( int x = 0; x < nodes.getLength(); x++ ) {
+    	for ( int x = 0; x < currentNodeSize; x++ ) {
     		 Node node = nodes.item(x);
-    		 if (node.getNodeType()==Node.ELEMENT_NODE){
+    		 if (node.getNodeType()==Node.ELEMENT_NODE && node.getNodeName() == "OperationDiff"){
     			 NodeList diffsNode = (NodeList)node.getChildNodes();
 				 
     			 if (getNodeSize("Statement",(NodeList)getNode("File1", diffsNode)) == getNodeSize("Statement",(NodeList)getNode("File2", diffsNode))){
