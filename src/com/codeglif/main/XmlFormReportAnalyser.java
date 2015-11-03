@@ -10,10 +10,13 @@ import com.codeglif.main.diff_match_patch.Diff;
 import com.codeglif.main.diff_match_patch.LinesToCharsResult;
 import com.sun.xml.internal.ws.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils.*;
 
@@ -25,6 +28,9 @@ public class XmlFormReportAnalyser {
     private Document root;
     private Integer totalExtForms;
     private HashMap<String, FormChangesFacts> formExtList = new HashMap<>();
+    
+    static final Set<String> structuralTypes = new HashSet<String>(Arrays.asList("LOV","Canvas","Block_Item"));
+
     
     private ParseProcessorFactory parseProcessorFactory;
 
@@ -65,7 +71,7 @@ public class XmlFormReportAnalyser {
     	Node diffTagNode = getNode("Diff", differenceNode.getChildNodes());
     	if (diffTagNode != null){
 	    	formExtList.get(formName).setTotalOperationalDiff(getOpperationalDiff(diffTagNode));
-//	    	formExtList.get(formName).setTotalStructuralDiff(getStructuralDiff(diffTagNode));
+	    	formExtList.get(formName).setTotalStructuralDiff(getStructuralDiff(diffTagNode));
     	}
     	
     	formExtList.get(formName).getAllFormFacts();
@@ -104,8 +110,22 @@ public class XmlFormReportAnalyser {
     	return count;
 	}
     
+    /*
+     * Node - <NewOperation>
+     * get totals of new operations with necessary exceptions
+     */
+    
     protected Integer getNewOpNodeSize(String tagName, NodeList nodes){
     	int count = 0;
+    	
+    	/*
+         * TODO
+         * this class is obsolete. It is possible
+         * to reduce the code lines for the simple
+         * task
+         */
+        
+        
     	for ( int x = 0; x < nodes.getLength(); x++ ) {
 	        Node node = nodes.item(x);
 	        if (node.getNodeName().equalsIgnoreCase(tagName) ){
@@ -121,20 +141,46 @@ public class XmlFormReportAnalyser {
     	return getNewOpNodeSize("NewOperation", newTagNode.getChildNodes());	
     }
     
+    /*
+     * NODE - <Structural>
+     * Deals with Structural differences
+     */
+    
     protected Integer getStructuralDiff(Node newTagNode){
     	return getStructuralDiffSize("StructuralDiff", newTagNode.getChildNodes());	
     }
-    
+        
     protected Integer getStructuralDiffSize(String tagName, NodeList nodes){
     	int count = 0;
+    	/*
+    	 * TODO
+    	 * add rules for each node name
+    	 * like Lov, Block Item
+    	 * 
+    	 */
+    	
     	for ( int x = 0; x < nodes.getLength(); x++ ) {
-    		 Node node = nodes.item(x);
-    		 if (node.getNodeName().equalsIgnoreCase(tagName) ){
-    			 count +=1;
+    		 Node currentNode = nodes.item(x);
+    		 if (currentNode.getNodeName() == tagName && currentNode.getNodeType() == Node.ELEMENT_NODE){
+    			 NodeList diffsNode = (NodeList)currentNode.getChildNodes();
+    			 for (int w = 0; w < getNode("File1", diffsNode).getChildNodes().getLength(); w++){
+    					 String File1 = "";
+    					 String File2 = "";
+    				 }
+    			 }
     		 }
-    	}    	
     	return count;
+    	}
+    
+    private Boolean isLovCountable(Node nodeItem){
+ 
+    	return true;
     }
+
+    /*
+     * NODE - <Operational>
+     * Deals with Operational differences
+     */
     
     protected Integer getOpperationalDiff(Node newTagNode){
     	return getOpperationalDiffSize("OperationDiff", newTagNode.getChildNodes());
@@ -144,9 +190,6 @@ public class XmlFormReportAnalyser {
     protected Integer getOpperationalDiffSize(String tagName, NodeList nodes){
     	
     	int count = 0;
-    	int currentNodeSize = 0;
-    	
-    	currentNodeSize = getNodeSize(tagName, nodes);
     	
     	/*
     	 * TODO
@@ -158,12 +201,12 @@ public class XmlFormReportAnalyser {
     	 * How to deal with node <RemovedOperation>
     	 * for now will be ignored
     	 * in the evaluation will discard everyone 
-    	 * excpet <OperationDiff>
+    	 * except <OperationDiff>
     	 */
     	
-    	for ( int x = 0; x < currentNodeSize; x++ ) {
+    	for ( int x = 0; x < nodes.getLength(); x++ ) {
     		 Node node = nodes.item(x);
-    		 if (node.getNodeType()==Node.ELEMENT_NODE && node.getNodeName() == "OperationDiff"){
+    		 if (node.getNodeType()==Node.ELEMENT_NODE && node.getNodeName() == tagName){
     			 NodeList diffsNode = (NodeList)node.getChildNodes();
 				 
     			 if (getNodeSize("Statement",(NodeList)getNode("File1", diffsNode)) == getNodeSize("Statement",(NodeList)getNode("File2", diffsNode))){
@@ -175,12 +218,13 @@ public class XmlFormReportAnalyser {
     						 File2 = getNode("File2", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
     					 }
     					 if(!File1.isEmpty() && !File2.isEmpty()){
-    						 if(statementsCompare(File1, File2)){
+    						 if(parseProcessorFactory.statementsCompare(File1, File2)){
     							 count +=1;
     						 }
     					 } 
     				 }
 	    		 }else{
+	    			 
 	    			 /*
 	    			  * TODO
 	    			  * This condition needs to be worked.
@@ -195,25 +239,5 @@ public class XmlFormReportAnalyser {
     	return count;
     }
 	
-	protected Boolean statementsCompare(String lineFile1, String lineFile2) {
-		
-		String eval = "";
-		Boolean diffIsNumb = false;
-		
-		diff_match_patch dmp = new diff_match_patch();  
-		LinkedList<Diff> dmplinesResult = dmp. diff_main(lineFile1, lineFile2);  
-		for(int x = 0; x < dmplinesResult.size(); x++){
-			if(dmplinesResult.get(x).operation.name().equals("DELETE")){
-				eval = dmplinesResult.get(x).text.toString();
-				diffIsNumb = org.apache.commons.lang3.StringUtils.isNumeric(eval);
-				break;
-			}
-		}
-			
-		if (diffIsNumb || eval.length() <= 4){
-			return false;
-		}else{
-		  return true;
-		}   
-	}
+	
 }
