@@ -1,24 +1,14 @@
 package com.codeglif.main;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.codeglif.main.diff_match_patch.Diff;
-import com.codeglif.main.diff_match_patch.LinesToCharsResult;
-import com.sun.xml.internal.ws.util.StringUtils;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class XmlFormReportAnalyser {
 
@@ -26,22 +16,25 @@ public class XmlFormReportAnalyser {
 	//http://www.javaspecialists.eu/archive/Issue163.html
 
     private Document root;
-    private Integer totalExtForms;
+    private String file1;
+    private String file2;
     private HashMap<String, FormChangesFacts> formExtList = new HashMap<>();
     
     static final Set<String> structuralTypes = new HashSet<String>(Arrays.asList("LOV","Canvas","Block_Item"));
-
+    
     
     private ParseProcessorFactory parseProcessorFactory;
 
     public XmlFormReportAnalyser(Document doc){
     	this.parseProcessorFactory = new ParseProcessorFactory();
     	this.root = doc;
+    	this.file1 = file1;
+    	this.file2 = file2;
     }
     
     public void mainReportProcessor(){
     	
-    	NodeList differenceList = root.getChildNodes();
+//    	NodeList differenceList = root.getChildNodes();
     	NodeList differenceMainNode = (NodeList) getNode("Differences", root.getChildNodes());
     	
     	for (int i = 0; i<differenceMainNode.getLength(); i++){
@@ -163,19 +156,31 @@ public class XmlFormReportAnalyser {
     		 Node currentNode = nodes.item(x);
     		 if (currentNode.getNodeName() == tagName && currentNode.getNodeType() == Node.ELEMENT_NODE){
     			 NodeList diffsNode = (NodeList)currentNode.getChildNodes();
-    			 for (int w = 0; w < getNode("File1", diffsNode).getChildNodes().getLength(); w++){
-    					 String File1 = "";
-    					 String File2 = "";
-    				 }
+    			 String nodeName = currentNode.getAttributes().getNamedItem("name").getNodeValue();
+    			 getFilesDiff(diffsNode, nodeName);
+     			
+    			 if (nodeName =="Block_Item"){
+    				 
+    			 	 }
     			 }
     		 }
     	return count;
     	}
     
-    private Boolean isLovCountable(Node nodeItem){
+    private Boolean isBlockItemCountable(Node nodeItem){
  
     	return true;
     }
+    private Boolean isLovCountable(Node nodeItem){
+    	 
+    	return true;
+    }
+    private Boolean isCanvasCountable(Node nodeItem){
+    	 
+    	return true;
+    }
+    
+    
 
     /*
      * NODE - <Operational>
@@ -211,14 +216,14 @@ public class XmlFormReportAnalyser {
 				 
     			 if (getNodeSize("Statement",(NodeList)getNode("File1", diffsNode)) == getNodeSize("Statement",(NodeList)getNode("File2", diffsNode))){
     				 for (int w = 0; w < getNode("File1", diffsNode).getChildNodes().getLength(); w++){
-    					 String File1 = "";
-    					 String File2 = "";
+    					 this.file1 = "";
+    					 this.file2 = "";
     					 if ( getNode("File1", diffsNode).getChildNodes().item(w).getNodeType() == Node.ELEMENT_NODE){
-    						 File1 = getNode("File1", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
-    						 File2 = getNode("File2", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+    						 this.file1 = getNode("File1", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+    						 this.file2 = getNode("File2", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
     					 }
-    					 if(!File1.isEmpty() && !File2.isEmpty()){
-    						 if(parseProcessorFactory.statementsCompare(File1, File2)){
+    					 if(!file1.isEmpty() && !file2.isEmpty()){
+    						 if(parseProcessorFactory.statementsCompare(file1, file2)){
     							 count +=1;
     						 }
     					 } 
@@ -238,6 +243,22 @@ public class XmlFormReportAnalyser {
     	}
     	return count;
     }
-	
+    
+    /*
+     * Utilities methods
+     */
+    
+    protected void getFilesDiff(NodeList diffsNode, String nodeName){
+    
+		for (int w = 0; w < getNode("File1", diffsNode).getChildNodes().getLength(); w++){
+			this.file1 = "";
+			this.file2 = "";
+			 if ( getNode("File1", diffsNode).getChildNodes().item(w).getNodeType() == Node.ELEMENT_NODE){
+				 this.file1 = getNode("File1", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+				 this.file2 = getNode("File2", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+			 }
+		}
+			
+    }
 	
 }
