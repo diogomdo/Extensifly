@@ -157,24 +157,34 @@ public class XmlFormReportAnalyser {
     		 if (currentNode.getNodeName() == tagName && currentNode.getNodeType() == Node.ELEMENT_NODE){
     			 NodeList diffsNode = (NodeList)currentNode.getChildNodes();
     			 String nodeName = currentNode.getAttributes().getNamedItem("name").getNodeValue();
-    			 getFilesDiff(diffsNode, nodeName);
-     			
-    			 if (nodeName =="Block_Item"){
+    			 
+    			 if (nodeName.equals("LOV") && isLovCountable(currentNode)){
+    				 count+=1;
+    			 	}
+    			 else if (nodeName.equals("Block_Item") && isBlockItemCountable(currentNode)){
     				 
-    			 	 }
     			 }
-    		 }
+    			 
+    			 else if (nodeName.equals("Canvas") && isCanvasCountable(currentNode)){
+    				 
+    			 }
+			 }
+		 }
     	return count;
     	}
     
+      private Boolean isLovCountable(Node nodeItem){
+    	  if (getNode("File1",(NodeList)nodeItem).getChildNodes().getLength() == 0){
+    	    	return true;  
+    	  }else{
+    		  return false;
+    	  }
+    }
     private Boolean isBlockItemCountable(Node nodeItem){
  
     	return true;
     }
-    private Boolean isLovCountable(Node nodeItem){
-    	 
-    	return true;
-    }
+  
     private Boolean isCanvasCountable(Node nodeItem){
     	 
     	return true;
@@ -248,17 +258,15 @@ public class XmlFormReportAnalyser {
      * Utilities methods
      */
     
-    protected void getFilesDiff(NodeList diffsNode, String nodeName){
-    
-		for (int w = 0; w < getNode("File1", diffsNode).getChildNodes().getLength(); w++){
-			this.file1 = "";
-			this.file2 = "";
-			 if ( getNode("File1", diffsNode).getChildNodes().item(w).getNodeType() == Node.ELEMENT_NODE){
-				 this.file1 = getNode("File1", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
-				 this.file2 = getNode("File2", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
-			 }
-		}
-			
-    }
+//    protected void getFilesDiff(NodeList diffsNode, String nodeName){
+//    
+//		this.file1 = "";
+//		this.file2 = "";
+//		 if ( getNode("File1", diffsNode).getChildNodes().item(w).getNodeType() == Node.ELEMENT_NODE){
+//			 this.file1 = getNode("File1", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+//			 this.file2 = getNode("File2", diffsNode).getChildNodes().item(w).getAttributes().getNamedItem("stmt").toString().replace("\n", "").replace(" ", "");
+//		 }
+//			
+//    }
 	
 }
