@@ -2,9 +2,13 @@ package com.codeglif.main;
 
 import java.util.LinkedList;
 
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import com.codeglif.main.diff_match_patch.Diff;
 
-public class ParseProcessorFactory {
+public class Utilities {
 
 	protected String getName(String formNametoParse){
     	String[] formNamesplitted = formNametoParse.split("\\\\");
@@ -41,4 +45,37 @@ public class ParseProcessorFactory {
 		  return true;
 		}   
 	}
+	
+	 protected String getNodeAttr(String attrName, Node node ) {
+	        NamedNodeMap attrs = node.getAttributes();
+	        for (int y = 0; y < attrs.getLength(); y++ ) {
+	            Node attr = attrs.item(y);
+	            if (attr.getNodeName().equalsIgnoreCase(attrName)) {
+	                return attr.getNodeValue();
+	            }
+	        }
+	        return "";
+	    }
+
+	    protected Node getNode(String tagName, NodeList nodes) {
+	        for ( int x = 0; x < nodes.getLength(); x++ ) {
+	            Node node = nodes.item(x);
+	            if (node.getNodeName().equalsIgnoreCase(tagName)) {
+	                return node;
+	            }
+	        }
+	     
+	        return null;
+	    }
+	    
+	    protected Integer getNodeSize(String tagName, NodeList nodes){
+	    	int count = 0;
+	    	for ( int x = 0; x < nodes.getLength(); x++ ) {
+		        Node node = nodes.item(x);
+		        if (node.getNodeName().equalsIgnoreCase(tagName)) {
+		        	count +=1;
+		        }
+	    	}
+	    	return count;
+		}
 }
