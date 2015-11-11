@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.text.html.BlockView;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -18,8 +20,9 @@ public class XmlFormReportAnalyser {
     private Document root;
     private String file1;
     private String file2;
+    private String formName;
     private HashMap<String, FormChangesFacts> formExtList = new HashMap<>();
-    
+    private Node mainFormNode;
     static final Set<String> structuralTypes = new HashSet<String>(Arrays.asList("LOV","Canvas","Block_Item"));
     
     
@@ -28,8 +31,7 @@ public class XmlFormReportAnalyser {
     public XmlFormReportAnalyser(Document doc){
     	this.util = new Utilities();
     	this.root = doc;
-    	this.file1 = file1;
-    	this.file2 = file2;
+
     }
     
     public void mainReportProcessor(){
@@ -38,10 +40,10 @@ public class XmlFormReportAnalyser {
     	NodeList differenceMainNode = (NodeList) util.getNode("Differences", root.getChildNodes());
     	
     	for (int i = 0; i<differenceMainNode.getLength(); i++){
-    		Node currentNode = differenceMainNode.item(i);
-    		if (currentNode.getNodeName() == "Difference" && currentNode.getNodeType()==Node.ELEMENT_NODE)
+    		mainFormNode = differenceMainNode.item(i);
+    		if (mainFormNode.getNodeName() == "Difference" && mainFormNode.getNodeType()==Node.ELEMENT_NODE)
     		{
-    			formListProcessor(currentNode);
+    			formListProcessor(mainFormNode);
     		}
     	}
     }
@@ -51,7 +53,7 @@ public class XmlFormReportAnalyser {
     	//TODO
     	//change variable names for something more intuitive
     	//for the navigation between nodes like "onDifferenceNode"
-    	String formName = util.getName(util.getNodeAttr("target", differenceNode));
+    	formName = util.getName(util.getNodeAttr("target", differenceNode));
 
     	formExtList.put(formName,new FormChangesFacts());
     	formExtList.get(formName).setFormName(formName);
@@ -64,7 +66,7 @@ public class XmlFormReportAnalyser {
     	Node diffTagNode = util.getNode("Diff", differenceNode.getChildNodes());
     	if (diffTagNode != null){
 	    	formExtList.get(formName).setTotalOperationalDiff(getOpperationalDiff(diffTagNode));
-	    	formExtList.get(formName).setTotalStructuralDiff(getStructuralDiff(diffTagNode));
+	    	getStructuralDiff(diffTagNode);
     	}
     	
     	formExtList.get(formName).getAllFormFacts();
@@ -108,13 +110,12 @@ public class XmlFormReportAnalyser {
      * Deals with Structural differences
      */
     
-    protected Integer getStructuralDiff(Node newTagNode){
-    	Integer diffSize = getStructuralDiffSize("StructuralDiff", newTagNode.getChildNodes());	
-    	return diffSize;	
+    protected void getStructuralDiff(Node newTagNode){
+    	getStructuralDiffSize("StructuralDiff", newTagNode.getChildNodes());	
+
     }
         
-    protected Integer getStructuralDiffSize(String tagName, NodeList nodes){
-    	int count = 0;
+    protected void getStructuralDiffSize(String tagName, NodeList nodes){
     	/*
     	 * TODO
     	 * add rules for each node name
@@ -129,20 +130,49 @@ public class XmlFormReportAnalyser {
     			 String nodeName = currentNode.getAttributes().getNamedItem("name").getNodeValue();
     			 
     			 if (nodeName.equals("LOV")){
-    				 count += isLovCountable(diffsNode);
+    				 int TotalNewLov = isLovCountable(diffsNode);
+    				 formExtList.get(formName).setTotalNewLov(TotalNewLov);
     			 }
     			 else if ( nodeName.equals("Canvas")){
-    				 count += isCanvasCountable(diffsNode);
+    				 int totalNewCanvas = isCanvasCountable(diffsNode);
+    				 formExtList.get(formName).setTotalNewCanvas(totalNewCanvas);
     			 	}
     			 else if (nodeName.equals("Block_Item") ){
-    				 count += isBlockItemCountable(currentNode);
+    				 isItemPropertyCountable(currentNode);
+    				 isBlockCountable(currentNode);
     			 }
 			 }
 		 }
-    	return count;
     	}
     
-      private Integer isLovCountable(NodeList nodeItem){
+      private void isBlockCountable(Node currentNode) {
+    	String blockName;
+    	Integer count=0;
+    	
+		if (util.getNodeSize("Element",util.getNode("File2",(NodeList)currentNode).getChildNodes()) > 0)
+			for (int x = 0; x < util.getNode("File2",(NodeList)currentNode).getChildNodes().getLength() ; x++){
+				if (util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getNodeName() == "Element" &&
+					  util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("Missing") &&
+					  util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("node").getNodeValue().equals("Block")){
+						formExtList.get(formName).setTotalNewBlock(count+=1);
+						blockName = util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("value").getNodeValue();
+						formExtList.get(formName).setTotalNewItems(newBlockItems(currentNode));
+					}
+			}
+	}
+
+	private Integer newBlockItems(Node currentNode) {
+
+		for (int x = 0; x < util.getNodeSize("NewOperation",(NodeList)util.getNode("New",mainFormNode.getChildNodes()).getChildNodes()) ; x++){
+			if (util.getNode("File1",(NodeList)currentNode).getChildNodes().item(x).getNodeName() == "Element" &&
+					  util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("Missing")){
+				return null;
+			}
+		}
+		return null;
+	}
+
+	private Integer isLovCountable(NodeList nodeItem){
     	  
     	  int count = 0;
     	  /*
@@ -169,7 +199,7 @@ public class XmlFormReportAnalyser {
     	  }
     	  return count;
     }
-    private int isBlockItemCountable(Node nodeItem){
+    private void isItemPropertyCountable(Node nodeItem){
  
     	int count = 0;
 	   	  if (util.getNode("Element",util.getNode("File1",(NodeList)nodeItem).getChildNodes()) == null 
@@ -184,7 +214,6 @@ public class XmlFormReportAnalyser {
 				  }
 			  
 	   	  }
-   	  return count;
     }
   
     private int isCanvasCountable(NodeList diffsNode){

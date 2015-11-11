@@ -8,6 +8,10 @@ public class FormChangesFacts{
 	private Integer totalNewOp = 0;
 	private Integer totalOperationalDiff = 0;
 	private Integer totalStructuralDiff = 0;
+	private Integer totalNewBlock = 0;
+	private Integer totalNewCanvas = 0;
+	private Integer totalNewLov = 0;
+	private Integer totalNewItems = 0;
 	private HashMap<String, Integer> structDiff;
 	
 	public FormChangesFacts(){
@@ -42,6 +46,37 @@ public class FormChangesFacts{
 	}
 	public void setStructDiff(HashMap<String, Integer> structDiff) {
 		this.structDiff = structDiff;
+	}
+	public Integer getTotalNewBlock() {
+		return totalNewBlock;
+	}
+
+	public void setTotalNewBlock(Integer totalNewBlock) {
+		this.totalNewBlock = totalNewBlock;
+	}
+
+	public Integer getTotalNewCanvas() {
+		return totalNewCanvas;
+	}
+
+	public void setTotalNewCanvas(Integer totalNewCanvas) {
+		this.totalNewCanvas = totalNewCanvas;
+	}
+
+	public Integer getTotalNewLov() {
+		return totalNewLov;
+	}
+
+	public void setTotalNewLov(Integer totalNewLov) {
+		this.totalNewLov = totalNewLov;
+	}
+
+	public Integer getTotalNewItems() {
+		return totalNewItems;
+	}
+
+	public void setTotalNewItems(Integer totalNewItems) {
+		this.totalNewItems = totalNewItems;
 	}
 
 	public void getAllFormFacts(){
