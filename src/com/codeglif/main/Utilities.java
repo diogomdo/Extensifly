@@ -79,8 +79,14 @@ public class Utilities {
 	    	return count;
 		}
 	    
-	    protected Boolean newBlockItem (String name, String blockName){
+	    protected Boolean newBlockItem (String newOpName, String blockName){
 
-	    	return false;
+	    	String[] parsedValue = newOpName.split(".");
+	    	String blockNameParsed = parsedValue[1];
+	    	if (blockName.equals(blockNameParsed)){
+	    		return true;
+	    	}else{
+		    	return false;
+	    	}
 	    }
 }

@@ -3,6 +3,7 @@ package com.codeglif.main;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.text.html.BlockView;
@@ -162,11 +163,13 @@ public class XmlFormReportAnalyser {
 	}
 
 	private Integer newBlockItems(Node currentNode, String blockName) {
-
+		List<String> newItems;
 		for (int x = 0; x < util.getNodeSize("NewOperation",(NodeList)util.getNode("New",mainFormNode.getChildNodes()).getChildNodes()) ; x++){
 			if (util.getNode("New",mainFormNode.getChildNodes()).getChildNodes().item(x).getNodeName() == "NewOperation"){
 				String newOpName = util.getNode("New",mainFormNode.getChildNodes()).getChildNodes().item(x).getAttributes().getNamedItem("name").getNodeValue();
-				
+				if (util.newBlockItem(newOpName, blockName)){
+					util.
+				}
 			}
 		}
 		return null;
