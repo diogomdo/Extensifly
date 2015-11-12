@@ -78,4 +78,9 @@ public class Utilities {
 	    	}
 	    	return count;
 		}
+	    
+	    protected Boolean newBlockItem (String name, String blockName){
+
+	    	return false;
+	    }
 }

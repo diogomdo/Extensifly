@@ -156,17 +156,17 @@ public class XmlFormReportAnalyser {
 					  util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("node").getNodeValue().equals("Block")){
 						formExtList.get(formName).setTotalNewBlock(count+=1);
 						blockName = util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("value").getNodeValue();
-						formExtList.get(formName).setTotalNewItems(newBlockItems(currentNode));
+						formExtList.get(formName).setTotalNewItems(newBlockItems(currentNode, blockName));
 					}
 			}
 	}
 
-	private Integer newBlockItems(Node currentNode) {
+	private Integer newBlockItems(Node currentNode, String blockName) {
 
 		for (int x = 0; x < util.getNodeSize("NewOperation",(NodeList)util.getNode("New",mainFormNode.getChildNodes()).getChildNodes()) ; x++){
-			if (util.getNode("File1",(NodeList)currentNode).getChildNodes().item(x).getNodeName() == "Element" &&
-					  util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("Missing")){
-				return null;
+			if (util.getNode("New",mainFormNode.getChildNodes()).getChildNodes().item(x).getNodeName() == "NewOperation"){
+				String newOpName = util.getNode("New",mainFormNode.getChildNodes()).getChildNodes().item(x).getAttributes().getNamedItem("name").getNodeValue();
+				
 			}
 		}
 		return null;
