@@ -84,7 +84,11 @@ public class FormChangesFacts{
 		System.out.println("FORM: "+ this.formName);
 		System.out.println("New Operations: "+this.getTotalNewOp());
 		System.out.println("Opperation Diffs: "+this.getTotalOperationalDiff());
-		System.out.println("Structural Diffs: "+this.getTotalStructuralDiff()+"\n");
+		System.out.println("Structural Diffs: "+this.getTotalStructuralDiff());
+		System.out.println("New Block: "+this.getTotalNewBlock());
+		System.out.println("New Canvas: "+this.getTotalNewCanvas());
+		System.out.println("New Items: "+this.getTotalNewItems());
+		System.out.println("New Lovs: "+this.getTotalNewLov()+"\n");
 		
 	}
 	

@@ -1,5 +1,6 @@
 package com.codeglif.main;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -163,16 +164,24 @@ public class XmlFormReportAnalyser {
 	}
 
 	private Integer newBlockItems(Node currentNode, String blockName) {
-		List<String> newItems;
+		
+		List<String> newItems = new ArrayList<>();
+		int count = 0;
+		
 		for (int x = 0; x < util.getNodeSize("NewOperation",(NodeList)util.getNode("New",mainFormNode.getChildNodes()).getChildNodes()) ; x++){
 			if (util.getNode("New",mainFormNode.getChildNodes()).getChildNodes().item(x).getNodeName() == "NewOperation"){
 				String newOpName = util.getNode("New",mainFormNode.getChildNodes()).getChildNodes().item(x).getAttributes().getNamedItem("name").getNodeValue();
-				if (util.newBlockItem(newOpName, blockName)){
-					util.
+				if (util.getNewOpValid(newOpName) && util.parsingNewOperationValue(newOpName).length >= 4 ){
+					String blockNameParsed = util.getNewBlockName(newOpName);
+					String itemNameParsed = util.getNewItemName(newOpName);
+					if (blockName.equals(blockNameParsed) && !newItems.contains(itemNameParsed)){
+						newItems.add(itemNameParsed);
+						count += 1;
+					}
 				}
 			}
 		}
-		return null;
+		return count;
 	}
 
 	private Integer isLovCountable(NodeList nodeItem){

@@ -1,6 +1,8 @@
 package com.codeglif.main;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -79,14 +81,18 @@ public class Utilities {
 	    	return count;
 		}
 	    
-	    protected Boolean newBlockItem (String newOpName, String blockName){
-
-	    	String[] parsedValue = newOpName.split(".");
-	    	String blockNameParsed = parsedValue[1];
-	    	if (blockName.equals(blockNameParsed)){
-	    		return true;
-	    	}else{
-		    	return false;
-	    	}
+	    protected String[] parsingNewOperationValue(String newOpName){
+	    	String[]newOperationValue= newOpName.split("[.]");
+			return newOperationValue;
+	    }
+	    
+	    protected String getNewBlockName(String newOpName){
+	    	String [] parsedValue = parsingNewOperationValue(newOpName);
+			return parsedValue[1];
+	    }
+	    
+	    protected String getNewItemName(String newOpName){
+	    	String [] parsedValue = parsingNewOperationValue(newOpName);
+	    	return parsedValue[2];
 	    }
 }
