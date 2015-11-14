@@ -12,11 +12,15 @@ public class FormChangesFacts{
 	private Integer totalNewCanvas = 0;
 	private Integer totalNewLov = 0;
 	private Integer totalNewItems = 0;
-	private HashMap<String, Integer> structDiff;
+	private Integer totalPropDiff = 0;
 	
-	public FormChangesFacts(){
+	public Integer getTotalPropDiff() {
+		return totalPropDiff;
 	}
-	
+
+	public void setTotalPropDiff(Integer totalPropDiff) {
+		this.totalPropDiff = totalPropDiff;
+	}
 	public String getFormName() {
 		return formName;
 	}
@@ -40,12 +44,6 @@ public class FormChangesFacts{
 	}
 	public void setTotalStructuralDiff(Integer totalStructuralDiff) {
 		this.totalStructuralDiff = totalStructuralDiff;
-	}
-	public HashMap<String, Integer> getStructDiff() {
-		return structDiff;
-	}
-	public void setStructDiff(HashMap<String, Integer> structDiff) {
-		this.structDiff = structDiff;
 	}
 	public Integer getTotalNewBlock() {
 		return totalNewBlock;
@@ -88,10 +86,14 @@ public class FormChangesFacts{
 		System.out.println("New Block: "+this.getTotalNewBlock());
 		System.out.println("New Canvas: "+this.getTotalNewCanvas());
 		System.out.println("New Items: "+this.getTotalNewItems());
+		System.out.println("Prop Diff: "+this.getTotalPropDiff());
 		System.out.println("New Lovs: "+this.getTotalNewLov()+"\n");
 		
 	}
 	
+	private int getTotaModifiedElements(){
+		return this.getTotalNewOp()+this.getTotalOperationalDiff()+this.getTotalNewBlock()+this.getTotalNewCanvas()+this.getTotalNewItems()+this.getTotalPropDiff()+this.getTotalNewLov();
+	}
 	
 
 }

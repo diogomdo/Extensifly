@@ -35,6 +35,14 @@ public class XmlFormReportAnalyser {
     	this.root = doc;
 
     }
+    /*
+     * TODO
+     * Priority is to abstract the way
+     * how navigation is done on the nodes
+     * 
+     * Too much 'for' cycles
+     * There is many code duplications
+     */
     
     public void mainReportProcessor(){
     	
@@ -212,38 +220,60 @@ public class XmlFormReportAnalyser {
     	  return count;
     }
     private void isItemPropertyCountable(Node nodeItem){
- 
+    	
     	int count = 0;
-	   	  if (util.getNode("Element",util.getNode("File1",(NodeList)nodeItem).getChildNodes()) == null 
-	   			  && util.getNodeSize("Element",util.getNode("File2",(NodeList)nodeItem).getChildNodes()) > 0  ){
-			  
-				  for (int x = 0; x < util.getNode("File2",(NodeList)nodeItem).getChildNodes().getLength() ; x++){
-					  
-					  if (util.getNode("File2",(NodeList)nodeItem).getChildNodes().item(x).getNodeName() == "Element" &&
-							  util.getNode("File2",(NodeList)nodeItem).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("Missing")){
-						  count += 1;
-					  }
+    	count = runItemPropertyFile("File1", nodeItem);
+    	count += runItemPropertyFile("File2", nodeItem);
+		
+    	formExtList.get(formName).setTotalPropDiff(count);
+    }
+    
+    private int runItemPropertyFile(String nodeId, Node nodeItem){
+    	
+    	int count = 0;
+    	if (util.getNode("Element",util.getNode(nodeId,(NodeList)nodeItem).getChildNodes()) != null ){
+			  for (int x = 0; x < util.getNode(nodeId,(NodeList)nodeItem).getChildNodes().getLength() ; x++){
+				  
+				  if (util.getNode(nodeId,(NodeList)nodeItem).getChildNodes().item(x).getNodeName() == "Element" &&
+						  util.getNode(nodeId,(NodeList)nodeItem).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("Missing")){
+					  count += 1;
 				  }
-			  
-	   	  }
+				  /*
+				   * this else/if is poor evaluated
+				   * the goal is to count each individual DiffValue exist
+				   * in File1 and File2
+				   * 
+				   * The best way is to verify if the item is declared in
+				   * File1 and File2.
+				   */
+				  else if (nodeId.equals("File1") && 
+						  util.getNode(nodeId,(NodeList)nodeItem).getChildNodes().item(x).getNodeName() == "Element" &&
+						  util.getNode(nodeId,(NodeList)nodeItem).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("DiffValue")){
+					  count += 1;
+				  }
+    
+			}
+    	}
+    	return count;
     }
   
     private int isCanvasCountable(NodeList diffsNode){
-	int count = 0;
-	if (util.getNodeSize("Element",util.getNode("File2",(NodeList)diffsNode).getChildNodes()) > 0  ){
-	  
-	  for (int x = 0; x < util.getNode("File2",(NodeList)diffsNode).getChildNodes().getLength() ; x++){
-	  
-		  if (util.getNode("File2",(NodeList)diffsNode).getChildNodes().item(x).getNodeName() == "Element" &&
-				  util.getNode("File2",(NodeList)diffsNode).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("Missing") &&
-				  util.getNode("File2",(NodeList)diffsNode).getChildNodes().item(x).getAttributes().getNamedItem("node").getNodeValue().equals("Canvas")){
-				  count += 1;
-			  }
-	  	}
+	
+	    int count = 0;
+		if (util.getNodeSize("Element",util.getNode("File2",(NodeList)diffsNode).getChildNodes()) > 0  ){
 		  
-  	  }
-  	  return count;
-    }
+		  for (int x = 0; x < util.getNode("File2",(NodeList)diffsNode).getChildNodes().getLength() ; x++){
+		  
+			  if (util.getNode("File2",(NodeList)diffsNode).getChildNodes().item(x).getNodeName() == "Element" &&
+					  util.getNode("File2",(NodeList)diffsNode).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("Missing") &&
+					  util.getNode("File2",(NodeList)diffsNode).getChildNodes().item(x).getAttributes().getNamedItem("node").getNodeValue().equals("Canvas")){
+					  count += 1;
+				  }
+		  	}
+			  
+	  	  }
+	  	  return count;
+	    }
     
     
 
