@@ -1,8 +1,6 @@
 package com.codeglif.main;
 
-import java.util.HashMap;
-
-public class FormChangesFacts{
+public class ChangeFacts {
 	
 	private String formName = "";
 	private Integer totalNewOp = 0;
@@ -17,7 +15,6 @@ public class FormChangesFacts{
 	public Integer getTotalPropDiff() {
 		return totalPropDiff;
 	}
-
 	public void setTotalPropDiff(Integer totalPropDiff) {
 		this.totalPropDiff = totalPropDiff;
 	}
@@ -76,24 +73,16 @@ public class FormChangesFacts{
 	public void setTotalNewItems(Integer totalNewItems) {
 		this.totalNewItems = totalNewItems;
 	}
-
-	public void getAllFormFacts(){
-		
-		System.out.println("FORM: "+ this.formName);
-		System.out.println("New Operations: "+this.getTotalNewOp());
-		System.out.println("Opperation Diffs: "+this.getTotalOperationalDiff());
-		System.out.println("Structural Diffs: "+this.getTotalStructuralDiff());
-		System.out.println("New Block: "+this.getTotalNewBlock());
-		System.out.println("New Canvas: "+this.getTotalNewCanvas());
-		System.out.println("New Items: "+this.getTotalNewItems());
-		System.out.println("Prop Diff: "+this.getTotalPropDiff());
-		System.out.println("New Lovs: "+this.getTotalNewLov()+"\n");
+	
+	public void printValues() {
+		System.out.println(this.getFormName());
+		System.out.println(this.getTotalNewOp());
+		System.out.println(this.getTotalOperationalDiff());
+		System.out.println(this.getTotalNewCanvas());
+		System.out.println(this.getTotalNewLov());
+		System.out.println(this.getTotalNewBlock());
+		System.out.println(this.getTotalNewItems());
+		System.out.println(this.getTotalPropDiff()+"\n");
 		
 	}
-	
-	private int getTotaModifiedElements(){
-		return this.getTotalNewOp()+this.getTotalOperationalDiff()+this.getTotalNewBlock()+this.getTotalNewCanvas()+this.getTotalNewItems()+this.getTotalPropDiff()+this.getTotalNewLov();
-	}
-	
-
 }

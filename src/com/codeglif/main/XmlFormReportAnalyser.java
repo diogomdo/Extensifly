@@ -1,7 +1,5 @@
 package com.codeglif.main;
 
-import com.codeglif.main.FormSpecs.CHANGEFACTS;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,10 +24,10 @@ public class XmlFormReportAnalyser {
     private String file2;
     private String formName;
 //    private HashMap<String, FormChangesFacts> formExtList = new HashMap<>();
-    private HashMap<String, FormSpecs> formExtList = new HashMap<>();
+    private ArrayList<ChangeFacts> extensionList = new ArrayList<>();
     private Node mainFormNode;
+    private ChangeFacts currentFacts;
 //    static final Set<String> structuralTypes = new HashSet<String>(Arrays.asList("LOV","Canvas","Block_Item"));
-    
     
     private Utilities util;
 
@@ -68,24 +66,26 @@ public class XmlFormReportAnalyser {
     	//for the navigation between nodes like "onDifferenceNode"
     	formName = util.getName(util.getNodeAttr("target", differenceNode));
    
-    	FormSpecs formEval = new FormSpecs();
-    	formEval.setFormName(formName);
+    	ChangeFacts currentFacts = new ChangeFacts();
+    	extensionList.add(currentFacts);
+    	
+    	currentFacts.setFormName(formName);
 //    	formExtList.put(formName, formNameEval);
 //    	formExtList.get(formName).setFormName(formName);
     	
     	Node newTagNode = util.getNode("New", differenceNode.getChildNodes());
     	if (newTagNode != null){
-    		CHANGEFACTS.NEWOPERATION.setTotalOcur(getTotalNewOp(newTagNode));
+    		currentFacts.setTotalNewOp(getTotalNewOp(newTagNode));
     	}
 
     	Node diffTagNode = util.getNode("Diff", differenceNode.getChildNodes());
     	if (diffTagNode != null){
-    		CHANGEFACTS.OPERATIONALDIFF.setTotalOcur(getOpperationalDiff(diffTagNode));
+    		currentFacts.setTotalOperationalDiff(getOpperationalDiff(diffTagNode));
 //	    	formExtList.get(formName).setTotalOperationalDiff(getOpperationalDiff(diffTagNode));
 	    	getStructuralDiff(diffTagNode);
     	}
-    	formEval.ExtensionDifficultyLevel();
-//    	formExtList.get(formName).getAllFormFacts();
+
+    	currentFacts.printValues();
     }
     
    
@@ -147,12 +147,12 @@ public class XmlFormReportAnalyser {
     			 
     			 if (nodeName.equals("LOV")){
     				 int TotalNewLov = isLovCountable(diffsNode);
-    				 CHANGEFACTS.NEWLOV.setTotalOcur(TotalNewLov);
+    				 currentFacts.setTotalNewLov(TotalNewLov);
 //    				 formExtList.get(formName).setTotalNewLov(TotalNewLov);
     			 }
     			 else if ( nodeName.equals("Canvas")){
     				 int totalNewCanvas = isCanvasCountable(diffsNode);
-    				 CHANGEFACTS.NEWCANVAS.setTotalOcur(totalNewCanvas);
+    				 currentFacts.setTotalNewCanvas(totalNewCanvas);
 //    				 formExtList.get(formName).setTotalNewCanvas(totalNewCanvas);
     			 	}
     			 else if (nodeName.equals("Block_Item") ){
@@ -172,11 +172,9 @@ public class XmlFormReportAnalyser {
 				if (util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getNodeName() == "Element" &&
 					  util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("Missing") &&
 					  util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("node").getNodeValue().equals("Block")){
-//						formExtList.get(formName).setTotalNewBlock(count+=1);
-						CHANGEFACTS.NEWBLOCK.setTotalOcur(count+1);
+						currentFacts.setTotalNewBlock(count+=1);
 						blockName = util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("value").getNodeValue();
-//						formExtList.get(formName).setTotalNewItems(newBlockItems(currentNode, blockName));
-						CHANGEFACTS.NEWITEM.setTotalOcur(newBlockItems(currentNode, blockName));
+//						currentFacts.setTotalNewItems(newBlockItems(currentNode, blockName));
 					}
 			}
 	}
@@ -234,8 +232,7 @@ public class XmlFormReportAnalyser {
     	int count = 0;
     	count = runItemPropertyFile("File1", nodeItem);
     	count += runItemPropertyFile("File2", nodeItem);
-		CHANGEFACTS.PROPERDIFF.setTotalOcur(count);
-//    	formExtList.get(formName).setTotalPropDiff(count);
+//		currentFacts.setTotalPropDiff(count);
     }
     
     private int runItemPropertyFile(String nodeId, Node nodeItem){
