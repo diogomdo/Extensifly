@@ -1,5 +1,7 @@
 package com.codeglif.main;
 
+import com.codeglif.main.FormSpecs.CHANGEFACTS;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,9 +25,10 @@ public class XmlFormReportAnalyser {
     private String file1;
     private String file2;
     private String formName;
-    private HashMap<String, FormChangesFacts> formExtList = new HashMap<>();
+//    private HashMap<String, FormChangesFacts> formExtList = new HashMap<>();
+    private HashMap<String, FormSpecs> formExtList = new HashMap<>();
     private Node mainFormNode;
-    static final Set<String> structuralTypes = new HashSet<String>(Arrays.asList("LOV","Canvas","Block_Item"));
+//    static final Set<String> structuralTypes = new HashSet<String>(Arrays.asList("LOV","Canvas","Block_Item"));
     
     
     private Utilities util;
@@ -64,22 +67,25 @@ public class XmlFormReportAnalyser {
     	//change variable names for something more intuitive
     	//for the navigation between nodes like "onDifferenceNode"
     	formName = util.getName(util.getNodeAttr("target", differenceNode));
-
-    	formExtList.put(formName,new FormChangesFacts());
-    	formExtList.get(formName).setFormName(formName);
+   
+    	FormSpecs formEval = new FormSpecs();
+    	formEval.setFormName(formName);
+//    	formExtList.put(formName, formNameEval);
+//    	formExtList.get(formName).setFormName(formName);
     	
     	Node newTagNode = util.getNode("New", differenceNode.getChildNodes());
     	if (newTagNode != null){
-    		formExtList.get(formName).setTotalNewOp(getTotalNewOp(newTagNode));
+    		CHANGEFACTS.NEWOPERATION.setTotalOcur(getTotalNewOp(newTagNode));
     	}
 
     	Node diffTagNode = util.getNode("Diff", differenceNode.getChildNodes());
     	if (diffTagNode != null){
-	    	formExtList.get(formName).setTotalOperationalDiff(getOpperationalDiff(diffTagNode));
+    		CHANGEFACTS.OPERATIONALDIFF.setTotalOcur(getOpperationalDiff(diffTagNode));
+//	    	formExtList.get(formName).setTotalOperationalDiff(getOpperationalDiff(diffTagNode));
 	    	getStructuralDiff(diffTagNode);
     	}
-    	
-    	formExtList.get(formName).getAllFormFacts();
+    	formEval.ExtensionDifficultyLevel();
+//    	formExtList.get(formName).getAllFormFacts();
     }
     
    
@@ -141,11 +147,13 @@ public class XmlFormReportAnalyser {
     			 
     			 if (nodeName.equals("LOV")){
     				 int TotalNewLov = isLovCountable(diffsNode);
-    				 formExtList.get(formName).setTotalNewLov(TotalNewLov);
+    				 CHANGEFACTS.NEWLOV.setTotalOcur(TotalNewLov);
+//    				 formExtList.get(formName).setTotalNewLov(TotalNewLov);
     			 }
     			 else if ( nodeName.equals("Canvas")){
     				 int totalNewCanvas = isCanvasCountable(diffsNode);
-    				 formExtList.get(formName).setTotalNewCanvas(totalNewCanvas);
+    				 CHANGEFACTS.NEWCANVAS.setTotalOcur(totalNewCanvas);
+//    				 formExtList.get(formName).setTotalNewCanvas(totalNewCanvas);
     			 	}
     			 else if (nodeName.equals("Block_Item") ){
     				 isItemPropertyCountable(currentNode);
@@ -164,9 +172,11 @@ public class XmlFormReportAnalyser {
 				if (util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getNodeName() == "Element" &&
 					  util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("diffType").getNodeValue().equals("Missing") &&
 					  util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("node").getNodeValue().equals("Block")){
-						formExtList.get(formName).setTotalNewBlock(count+=1);
+//						formExtList.get(formName).setTotalNewBlock(count+=1);
+						CHANGEFACTS.NEWBLOCK.setTotalOcur(count+1);
 						blockName = util.getNode("File2",(NodeList)currentNode).getChildNodes().item(x).getAttributes().getNamedItem("value").getNodeValue();
-						formExtList.get(formName).setTotalNewItems(newBlockItems(currentNode, blockName));
+//						formExtList.get(formName).setTotalNewItems(newBlockItems(currentNode, blockName));
+						CHANGEFACTS.NEWITEM.setTotalOcur(newBlockItems(currentNode, blockName));
 					}
 			}
 	}
@@ -224,8 +234,8 @@ public class XmlFormReportAnalyser {
     	int count = 0;
     	count = runItemPropertyFile("File1", nodeItem);
     	count += runItemPropertyFile("File2", nodeItem);
-		
-    	formExtList.get(formName).setTotalPropDiff(count);
+		CHANGEFACTS.PROPERDIFF.setTotalOcur(count);
+//    	formExtList.get(formName).setTotalPropDiff(count);
     }
     
     private int runItemPropertyFile(String nodeId, Node nodeItem){
