@@ -21,7 +21,9 @@ public class ExtensifyMain {
             
             XmlFormReportAnalyser formProcessing = new XmlFormReportAnalyser(doc);
             formProcessing.mainReportProcessor();
-
+            
+            EvalSpecs evaluation = new EvalSpecs(formProcessing.getExtensionList());
+            
         }catch(Exception e){
             e.printStackTrace();
         }

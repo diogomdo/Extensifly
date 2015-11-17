@@ -1,5 +1,7 @@
 package com.codeglif.main;
 
+import java.util.ArrayList;
+
 public class EvalSpecs {
 	
 	public enum EvalFacts implements Evaluation{
@@ -32,8 +34,21 @@ public class EvalSpecs {
 
 	}
 	
-	public void ExtensionDifficultyLevel(){
+	public EvalSpecs(ArrayList<ChangeFacts> changeFacts){
+		extensionDifficultyLevel(changeFacts);
+	}
+	
+	public EvalFacts find(String description){
+		return null;
+		
+	}
+	
+	public void extensionDifficultyLevel(ArrayList<ChangeFacts> changeFacts){
 		int extTotal = 0;
+		
+		for (ChangeFacts c : changeFacts){
+			
+		}
 		for (EvalFacts r : EvalFacts.values()){
 			System.out.println(r);
 		}

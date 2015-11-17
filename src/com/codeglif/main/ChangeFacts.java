@@ -76,13 +76,13 @@ public class ChangeFacts {
 	
 	public void printValues() {
 		System.out.println(this.getFormName());
-		System.out.println(this.getTotalNewOp());
-		System.out.println(this.getTotalOperationalDiff());
-		System.out.println(this.getTotalNewCanvas());
-		System.out.println(this.getTotalNewLov());
-		System.out.println(this.getTotalNewBlock());
-		System.out.println(this.getTotalNewItems());
-		System.out.println(this.getTotalPropDiff()+"\n");
+		System.out.println("New Op "+this.getTotalNewOp());
+		System.out.println("Op Diff "+this.getTotalOperationalDiff());
+		System.out.println("Canvas "+this.getTotalNewCanvas());
+		System.out.println("LOV "+this.getTotalNewLov());
+		System.out.println("Block "+this.getTotalNewBlock());
+		System.out.println("New Items "+this.getTotalNewItems());
+		System.out.println("Diff Prop "+this.getTotalPropDiff()+"\n");
 		
 	}
 }

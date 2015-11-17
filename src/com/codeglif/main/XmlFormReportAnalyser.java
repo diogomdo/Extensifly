@@ -15,8 +15,10 @@ public class XmlFormReportAnalyser {
     private String file1;
     private String file2;
     private String formName;
-    private ArrayList<ChangeFacts> extensionList = new ArrayList<>();
-    private Node mainFormNode;
+    private ArrayList<ChangeFacts> extensionList;
+    
+
+	private Node mainFormNode;
     private ChangeFacts currentFacts;
     
     private Utilities util;
@@ -24,6 +26,7 @@ public class XmlFormReportAnalyser {
     public XmlFormReportAnalyser(Document doc){
     	this.util = new Utilities();
     	this.root = doc;
+    	extensionList = new ArrayList<>();
 
     }
     /*
@@ -55,7 +58,8 @@ public class XmlFormReportAnalyser {
     	//for the navigation between nodes like "onDifferenceNode"
     	formName = util.getName(util.getNodeAttr("target", differenceNode));
    
-    	ChangeFacts currentFacts = new ChangeFacts();
+    	ChangeFacts changes = new ChangeFacts();
+    	currentFacts = changes;
     	extensionList.add(currentFacts);
     	
     	currentFacts.setFormName(formName);
@@ -214,10 +218,10 @@ public class XmlFormReportAnalyser {
     }
     private void isItemPropertyCountable(Node nodeItem){
     	
-    	int count = 0;
+    	Integer count;
     	count = runItemPropertyFile("File1", nodeItem);
     	count += runItemPropertyFile("File2", nodeItem);
-		currentFacts.setTotalPropDiff(count);
+		this.currentFacts.setTotalPropDiff(count);
     }
     
     private int runItemPropertyFile(String nodeId, Node nodeItem){
@@ -329,4 +333,12 @@ public class XmlFormReportAnalyser {
     	}
     	return count;
     }
+    
+    public ArrayList<ChangeFacts> getExtensionList() {
+		return extensionList;
+	}
+
+	public void setExtensionList(ArrayList<ChangeFacts> extensionList) {
+		this.extensionList = extensionList;
+	}
 }
