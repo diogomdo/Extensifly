@@ -3,13 +3,13 @@ package com.codeglif.main;
 public class ChangeFacts {
 	
 	private String formName = "";
-	private Integer totalNewOp = 0;
+	private Integer totalNewOperation = 0;
 	private Integer totalOperationalDiff = 0;
 	private Integer totalStructuralDiff = 0;
 	private Integer totalNewBlock = 0;
 	private Integer totalNewCanvas = 0;
 	private Integer totalNewLov = 0;
-	private Integer totalNewItems = 0;
+	private Integer totalNewItem = 0;
 	private Integer totalPropDiff = 0;
 	
 	public Integer getTotalPropDiff() {
@@ -25,10 +25,10 @@ public class ChangeFacts {
 		this.formName = formName;
 	}
 	public Integer getTotalNewOp() {
-		return totalNewOp;
+		return totalNewOperation;
 	}
 	public void setTotalNewOp(Integer totalNewOp) {
-		this.totalNewOp = totalNewOp;
+		this.totalNewOperation = totalNewOp;
 	}
 	public Integer getTotalOperationalDiff() {
 		return totalOperationalDiff;
@@ -67,11 +67,11 @@ public class ChangeFacts {
 	}
 
 	public Integer getTotalNewItems() {
-		return totalNewItems;
+		return totalNewItem;
 	}
 
 	public void setTotalNewItems(Integer totalNewItems) {
-		this.totalNewItems = totalNewItems;
+		this.totalNewItem = totalNewItems;
 	}
 	
 	public void printValues() {

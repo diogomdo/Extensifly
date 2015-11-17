@@ -11,7 +11,7 @@ public class EvalSpecs {
 		NEWCANVAS(4,20),
 		NEWLOV(3,10),
 		NEWITEM(4,15),
-		PROPERDIFF(1,2);
+		PROPDIFF(1,2);
 
 
 		private int difficulteLevel;
