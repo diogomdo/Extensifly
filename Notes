@@ -1,3 +1,9 @@
+TODO:
+
+-Tentar aplicar o builder pattern na classe Evalspecs
+-E preciso rever o codigo da classe xmlFormReportAnalyser (reverse eng)
+
+---------------------------------------------------------------------------
 Items necessarios processar
 	-Block
 	-Novos Items

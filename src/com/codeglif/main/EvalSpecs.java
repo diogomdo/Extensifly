@@ -1,14 +1,17 @@
 package com.codeglif.main;
 
-import java.util.ArrayList;
-
 public class EvalSpecs {
+	
+	/*
+	 * TODO - Implement
+	 * In a near future it is good 
+	 * practice implement builder pattern
+	 */
 
 	private double difficultyGrade;
 	private double timeSpent;
-	private String formName;
-	private ArrayList<EvalSpecs> evalSpecsList;
-	
+	private String ExtensionName;
+
 	public enum EvalFacts implements Evaluation{
 		NEWOPERATION(1,1),
 		OPERATIONALDIFF(2,3),
@@ -39,65 +42,77 @@ public class EvalSpecs {
 
 	}
 	
-	public EvalSpecs(ArrayList<ChangeFacts> changeFacts){
-		for (ChangeFacts currentExtension : changeFacts){
-			EvalSpecs currentEval;
-			formName = currentExtension.getFormName();
-			difficultyCalc(EvalFacts.values(), currentExtension);
-			timeCalc(EvalFacts.values(), currentExtension);
-			evalSpecsList.add(this);
-		}
-		
+	public EvalSpecs(ChangeFacts changeFacts){
+			difficultyCalc(EvalFacts.values(), changeFacts);
+			timeCalc(EvalFacts.values(), changeFacts);
 	}
 	
 	public void difficultyCalc(EvalFacts[] evalFacts, ChangeFacts changeFacts){
-		int changeVal = 0;
-		int currItemDiffVal = 0;
-		int sumDiffVal = 0;
+		int changedItems = 0;
+		int currItemDiffLvl = 0;
+		int totalChangedItems = 0;
+		int tempDifficultyGrade = 0;
 		for (EvalFacts e : evalFacts){
-			changeVal = getCorrespChangeValue(e, changeFacts);
-			currItemDiffVal = e.getDifficultyLevel();
-			sumDiffVal =+ e.getDifficultyLevel();
-			difficultyGrade =+ changeVal*currItemDiffVal;
+			changedItems = getCorrespChangeValue(e, changeFacts);
+			if (changedItems != 0){
+				currItemDiffLvl = e.getDifficultyLevel();
+				totalChangedItems = changedItems + totalChangedItems;
+				tempDifficultyGrade = changedItems*currItemDiffLvl;
+				difficultyGrade = difficultyGrade + tempDifficultyGrade;
+			}
 		}
-		difficultyGrade = difficultyGrade/sumDiffVal;
+		difficultyGrade = difficultyGrade/totalChangedItems;
 		
 	}
 	
 	public void timeCalc(EvalFacts[] evalFacts, ChangeFacts changeFacts){
 		int changeVal = 0;
 		int currItemTimeVal = 0;
-		int sumTimeVal = 0;
+		int tempTimeSpent = 0;
 		for (EvalFacts e : evalFacts){
 			changeVal = getCorrespChangeValue(e, changeFacts);
 			currItemTimeVal = e.getTimeSpent();
-			timeSpent =+ changeVal*currItemTimeVal;
+			tempTimeSpent = changeVal*currItemTimeVal;
+			timeSpent = timeSpent + tempTimeSpent;
 		}
-		timeSpent = timeSpent/sumTimeVal;
-		
 	}
 	
 	public Integer getCorrespChangeValue(EvalFacts evalFacts, ChangeFacts changeFacts){
 		switch (evalFacts){
 		
 			case NEWOPERATION:
-				return changeFacts.getTotalOperationalDiff();
+				return changeFacts.getTotalNewOp();
 			case OPERATIONALDIFF:
 				return changeFacts.getTotalOperationalDiff();
 			case NEWBLOCK:
-				return changeFacts.getTotalOperationalDiff();
+				return changeFacts.getTotalNewBlock();
 			case NEWCANVAS:
-				return changeFacts.getTotalOperationalDiff();
+				return changeFacts.getTotalNewCanvas();
 			case NEWLOV:
-				return changeFacts.getTotalOperationalDiff();
+				return changeFacts.getTotalNewLov();
 			case NEWITEM:
-				return changeFacts.getTotalOperationalDiff();
+				return changeFacts.getTotalNewItems();
 			case PROPDIFF:
-				return changeFacts.getTotalOperationalDiff();
+				return changeFacts.getTotalPropDiff();
 			default: 
 				System.out.println("Property not valid, "+ evalFacts);
 				return null;
 		}
-	}	
+	}
+	
+	public String getExtensionName() {
+		return ExtensionName;
+	}
+
+	public void setExtensionName(String extensionName) {
+		ExtensionName = extensionName;
+	}
+	
+	public void print(){
+		
+		System.out.println(getExtensionName());
+		System.out.println("Diff index: "+this.difficultyGrade);
+		System.out.println("Time index: "+this.timeSpent+"\n");
+	}
 
 }

@@ -6,9 +6,12 @@ import org.w3c.dom.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.util.ArrayList;
 
 public class ExtensifyMain {
     public static void main(String argv[]){
+    	
+    	ArrayList<EvalSpecs> listOfEvalSpecs = new ArrayList<>();
         
     	try{
 
@@ -22,7 +25,13 @@ public class ExtensifyMain {
             XmlFormReportAnalyser formProcessing = new XmlFormReportAnalyser(doc);
             formProcessing.mainReportProcessor();
             
-            EvalSpecs evaluation = new EvalSpecs(formProcessing.getExtensionList());
+            for (ChangeFacts currentExt : formProcessing.getExtensionList()){
+            	EvalSpecs currentExtEval = new EvalSpecs(currentExt);
+            	currentExtEval.setExtensionName(currentExt.getFormName()); ;
+            	listOfEvalSpecs.add(currentExtEval);
+            	currentExtEval.print();
+            }
+            
             
         }catch(Exception e){
             e.printStackTrace();
