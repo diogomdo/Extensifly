@@ -10,6 +10,7 @@ public class EvalSpecs {
 
 	private double difficultyGrade;
 	private double timeSpent;
+	private double absDifficultyGrade;
 	private String ExtensionName;
 
 	public enum EvalFacts implements Evaluation{
@@ -52,12 +53,16 @@ public class EvalSpecs {
 		int currItemDiffLvl = 0;
 		int totalChangedItems = 0;
 		int tempDifficultyGrade = 0;
+		int absDiffu = 0;
 		for (EvalFacts e : evalFacts){
 			changedItems = getCorrespChangeValue(e, changeFacts);
 			if (changedItems != 0){
 				currItemDiffLvl = e.getDifficultyLevel();
+				absDiffu =  absDiffu + currItemDiffLvl;
 				totalChangedItems = changedItems + totalChangedItems;
 				tempDifficultyGrade = changedItems*currItemDiffLvl;
+				
+				absDifficultyGrade = absDiffu;
 				difficultyGrade = difficultyGrade + tempDifficultyGrade;
 			}
 		}
@@ -111,7 +116,8 @@ public class EvalSpecs {
 	public void print(){
 		
 		System.out.println(getExtensionName());
-		System.out.println("Diff index: "+this.difficultyGrade);
+		System.out.println("Diff rel index: "+this.difficultyGrade);
+		System.out.println("Diff abs index: "+this.absDifficultyGrade);
 		System.out.println("Time index: "+this.timeSpent+"\n");
 	}
 
