@@ -32,6 +32,9 @@ public class ExtensifyMain {
             	currentExtEval.print();
             }
             
+            WriteTable export = new WriteTable(formProcessing.getExtensionList());
+            export.write();
+            
             
         }catch(Exception e){
             e.printStackTrace();

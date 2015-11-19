@@ -95,4 +95,17 @@ public class Utilities {
 	    	String [] parsedValue = parsingNewOperationValue(newOpName);
 	    	return parsedValue[2];
 	    }
+	    
+	    public EvalSpecs findExtensionEvalSpecs(ArrayList<EvalSpecs> listOfEvalSpecs, String extensionName){
+	    	
+	    	for (EvalSpecs currentExtEvalData : listOfEvalSpecs){
+	    		if (currentExtEvalData.getExtensionName().equals(extensionName)){
+	    			return currentExtEvalData;
+	    	}else{
+	    		System.out.println(extensionName+" evaluation specs not found.\n");
+	    	}
+
+	    }
+			return null;
+	}
 }
