@@ -8,6 +8,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.codeglif.main.EvalSpecs.EvalFacts;
 import com.codeglif.main.diff_match_patch.Diff;
 
 public class Utilities {
@@ -107,5 +108,28 @@ public class Utilities {
 
 	    }
 			return null;
+	}
+	    
+    public Integer getCorrespChangeValue(EvalFacts evalFacts, ChangeFacts changeFacts){
+		switch (evalFacts){
+		
+			case NEWOPERATION:
+				return changeFacts.getTotalNewOp();
+			case OPERATIONALDIFF:
+				return changeFacts.getTotalOperationalDiff();
+			case NEWBLOCK:
+				return changeFacts.getTotalNewBlock();
+			case NEWCANVAS:
+				return changeFacts.getTotalNewCanvas();
+			case NEWLOV:
+				return changeFacts.getTotalNewLov();
+			case NEWITEM:
+				return changeFacts.getTotalNewItems();
+			case PROPDIFF:
+				return changeFacts.getTotalPropDiff();
+			default: 
+				System.out.println("Property not valid, "+ evalFacts);
+				return null;
+		}
 	}
 }

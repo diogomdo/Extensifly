@@ -12,6 +12,8 @@ public class EvalSpecs {
 	private double timeSpent;
 	private double absDifficultyGrade;
 	private String ExtensionName;
+	
+	private Utilities util;
 
 	public enum EvalFacts implements Evaluation{
 		NEWOPERATION(1,1),
@@ -44,6 +46,7 @@ public class EvalSpecs {
 	}
 	
 	public EvalSpecs(ChangeFacts changeFacts){
+			this.util = new Utilities();
 			difficultyCalc(EvalFacts.values(), changeFacts);
 			timeCalc(EvalFacts.values(), changeFacts);
 	}
@@ -55,7 +58,7 @@ public class EvalSpecs {
 		int tempDifficultyGrade = 0;
 		int absDiffu = 0;
 		for (EvalFacts e : evalFacts){
-			changedItems = getCorrespChangeValue(e, changeFacts);
+			changedItems = util.getCorrespChangeValue(e, changeFacts);
 			if (changedItems != 0){
 				currItemDiffLvl = e.getDifficultyLevel();
 				absDiffu =  absDiffu + currItemDiffLvl;
@@ -75,35 +78,35 @@ public class EvalSpecs {
 		int currItemTimeVal = 0;
 		int tempTimeSpent = 0;
 		for (EvalFacts e : evalFacts){
-			changeVal = getCorrespChangeValue(e, changeFacts);
+			changeVal = util.getCorrespChangeValue(e, changeFacts);
 			currItemTimeVal = e.getTimeSpent();
 			tempTimeSpent = changeVal*currItemTimeVal;
 			timeSpent = timeSpent + tempTimeSpent;
 		}
 	}
 	
-	public Integer getCorrespChangeValue(EvalFacts evalFacts, ChangeFacts changeFacts){
-		switch (evalFacts){
-		
-			case NEWOPERATION:
-				return changeFacts.getTotalNewOp();
-			case OPERATIONALDIFF:
-				return changeFacts.getTotalOperationalDiff();
-			case NEWBLOCK:
-				return changeFacts.getTotalNewBlock();
-			case NEWCANVAS:
-				return changeFacts.getTotalNewCanvas();
-			case NEWLOV:
-				return changeFacts.getTotalNewLov();
-			case NEWITEM:
-				return changeFacts.getTotalNewItems();
-			case PROPDIFF:
-				return changeFacts.getTotalPropDiff();
-			default: 
-				System.out.println("Property not valid, "+ evalFacts);
-				return null;
-		}
-	}
+//	public Integer getCorrespChangeValue(EvalFacts evalFacts, ChangeFacts changeFacts){
+//		switch (evalFacts){
+//		
+//			case NEWOPERATION:
+//				return changeFacts.getTotalNewOp();
+//			case OPERATIONALDIFF:
+//				return changeFacts.getTotalOperationalDiff();
+//			case NEWBLOCK:
+//				return changeFacts.getTotalNewBlock();
+//			case NEWCANVAS:
+//				return changeFacts.getTotalNewCanvas();
+//			case NEWLOV:
+//				return changeFacts.getTotalNewLov();
+//			case NEWITEM:
+//				return changeFacts.getTotalNewItems();
+//			case PROPDIFF:
+//				return changeFacts.getTotalPropDiff();
+//			default: 
+//				System.out.println("Property not valid, "+ evalFacts);
+//				return null;
+//		}
+//	}
 	
 	public String getExtensionName() {
 		return ExtensionName;
