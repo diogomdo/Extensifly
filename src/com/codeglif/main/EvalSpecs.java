@@ -8,9 +8,9 @@ public class EvalSpecs {
 	 * practice implement builder pattern
 	 */
 
-	private double difficultyGrade;
-	private double timeSpent;
-	private double absDifficultyGrade;
+	public double difficultyGrade;
+	public double timeSpent;
+	public double absDifficultyGrade;
 	private String ExtensionName;
 	
 	private Utilities util;
@@ -69,7 +69,8 @@ public class EvalSpecs {
 				difficultyGrade = difficultyGrade + tempDifficultyGrade;
 			}
 		}
-		difficultyGrade = difficultyGrade/totalChangedItems;
+//		difficultyGrade = Math.round(difficultyGrade/totalChangedItems);
+		difficultyGrade = Double.parseDouble(String.format("%.3f",difficultyGrade/totalChangedItems));
 		
 	}
 	
@@ -84,29 +85,6 @@ public class EvalSpecs {
 			timeSpent = timeSpent + tempTimeSpent;
 		}
 	}
-	
-//	public Integer getCorrespChangeValue(EvalFacts evalFacts, ChangeFacts changeFacts){
-//		switch (evalFacts){
-//		
-//			case NEWOPERATION:
-//				return changeFacts.getTotalNewOp();
-//			case OPERATIONALDIFF:
-//				return changeFacts.getTotalOperationalDiff();
-//			case NEWBLOCK:
-//				return changeFacts.getTotalNewBlock();
-//			case NEWCANVAS:
-//				return changeFacts.getTotalNewCanvas();
-//			case NEWLOV:
-//				return changeFacts.getTotalNewLov();
-//			case NEWITEM:
-//				return changeFacts.getTotalNewItems();
-//			case PROPDIFF:
-//				return changeFacts.getTotalPropDiff();
-//			default: 
-//				System.out.println("Property not valid, "+ evalFacts);
-//				return null;
-//		}
-//	}
 	
 	public String getExtensionName() {
 		return ExtensionName;

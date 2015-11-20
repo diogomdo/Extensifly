@@ -132,4 +132,26 @@ public class Utilities {
 				return null;
 		}
 	}
+    public Integer getCorrespChangeValue(String evalFacts, ChangeFacts changeFacts){
+		switch (evalFacts){
+		
+			case "NEWOPERATION":
+				return changeFacts.getTotalNewOp();
+			case "OPERATIONALDIFF":
+				return changeFacts.getTotalOperationalDiff();
+			case "NEWBLOCK":
+				return changeFacts.getTotalNewBlock();
+			case "NEWCANVAS":
+				return changeFacts.getTotalNewCanvas();
+			case "NEWLOV":
+				return changeFacts.getTotalNewLov();
+			case "NEWITEM":
+				return changeFacts.getTotalNewItems();
+			case "PROPDIFF":
+				return changeFacts.getTotalPropDiff();
+			default: 
+				System.out.println("Property not valid, "+ evalFacts);
+				return 0;
+		}
+	}
 }

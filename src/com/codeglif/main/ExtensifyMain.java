@@ -32,7 +32,7 @@ public class ExtensifyMain {
             	currentExtEval.print();
             }
             
-            WriteTable export = new WriteTable(formProcessing.getExtensionList());
+            WriteTable export = new WriteTable(formProcessing.getExtensionList(), listOfEvalSpecs);
             export.write();
             
             

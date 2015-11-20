@@ -1,11 +1,10 @@
-/**
- * 
- */
 package com.codeglif.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 import com.codeglif.main.EvalSpecs.EvalFacts;
@@ -27,18 +26,22 @@ import jxl.write.biff.RowsExceededException;
  */
 public class WriteTable {
 	
-	private String fileName = "./Export/file.xls";
+	private String filePath = "./Export/";
 	private ArrayList<ChangeFacts> cFacts;
-	WritableSheet extensionReportSheet = null;
+	private ArrayList<EvalSpecs> eFacts;
+	private ArrayList<String> listOfItemsHeaders = new ArrayList<>();
 	private Utilities util;
+	WritableSheet extensionReportSheet = null;
+	String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 	
-	public WriteTable(ArrayList<ChangeFacts> changeFacts){
+	public WriteTable(ArrayList<ChangeFacts> changeFacts, ArrayList<EvalSpecs> listOfEvalSpecs){
 		this.util = new Utilities();
+		this.eFacts = listOfEvalSpecs;
 		this.cFacts = changeFacts;
 	}
 	
 	public void write() throws IOException, WriteException {
-	    File file = new File(fileName);
+	    File file = new File(filePath+"output"+timeStamp+".xls");
 	    WorkbookSettings wbSettings = new WorkbookSettings();
 
 	    wbSettings.setLocale(new Locale("en", "EN"));
@@ -46,21 +49,21 @@ public class WriteTable {
 	    WritableWorkbook workbook = Workbook.createWorkbook(file, wbSettings);
 	    WritableSheet extensionReportSheet = workbook.createSheet("Extension Report", 0);
 	    setTableHeaders(extensionReportSheet);
-//	    contentFiller(cFacts, extensionReportSheet);
+	    contentFiller(cFacts, extensionReportSheet);
 	    workbook.write();
 	    workbook.close();
 	  }
 	
 	public void setTableHeaders(WritableSheet reportSheet) throws WriteException, WriteException{
 		EvalFacts[] ExtFactsNames = EvalSpecs.EvalFacts.values();
-		ArrayList<String> listOfItemsHeaders = new ArrayList<>();
+		
 		 for (int i = 0; i < ExtFactsNames.length; i++){
-			 listOfItemsHeaders.add(ExtFactsNames[i].name());
+			 this.listOfItemsHeaders.add(ExtFactsNames[i].name());
 		 }
-		 listOfItemsHeaders.add(0, "NAME");
-		 listOfItemsHeaders.add(listOfItemsHeaders.size(), "DIFF REL");
-		 listOfItemsHeaders.add(listOfItemsHeaders.size(), "DIFF ABS");
-		 listOfItemsHeaders.add(listOfItemsHeaders.size(), "TIME");
+		 this.listOfItemsHeaders.add(0, "NAME");
+		 this.listOfItemsHeaders.add(listOfItemsHeaders.size(), "DIFF REL");
+		 this.listOfItemsHeaders.add(listOfItemsHeaders.size(), "DIFF ABS");
+		 this.listOfItemsHeaders.add(listOfItemsHeaders.size(), "TIME");
 		 
 		 for (int i = 0; i < listOfItemsHeaders.size(); i++) {
              Label label = new Label(i, 0, listOfItemsHeaders.get(i));
@@ -69,11 +72,30 @@ public class WriteTable {
          }
 	}
 	
-	public void contentFiller(ArrayList<ChangeFacts> cFacts, WritableSheet extensionReportSheet,ArrayList<String> listOfItemsHeaders){
+	public void contentFiller(ArrayList<ChangeFacts> cFacts, WritableSheet extensionReportSheet) throws RowsExceededException, WriteException{
 		
-		for (int i = 0; i < cFacts.size(); i++){
-			for(listOfItemsHeaders h : )
-			Label label = new Label(0, i, listOfItemsHeaders.get(i));
+		/*loop for the extensions - lines*/
+		for (int line = 0; line < cFacts.size(); line++){
+			for (int j = 0; j < this.listOfItemsHeaders.size(); j++){
+				/*add name*/
+				Label extName = new Label(0, line+1, cFacts.get(line).getFormName());
+				extensionReportSheet.addCell(extName);
+				
+				if (listOfItemsHeaders.get(j).equals("DIFF REL")){
+					Label diffRel = new Label(j, line+1, String.valueOf(eFacts.get(line).difficultyGrade));
+					extensionReportSheet.addCell(diffRel);
+				}else if (listOfItemsHeaders.get(j).equals("DIFF ABS")){
+					Label diffAbs = new Label(j, line+1, String.valueOf(eFacts.get(line).absDifficultyGrade));
+					extensionReportSheet.addCell(diffAbs);
+				}else if (listOfItemsHeaders.get(j).equals("TIME")){
+					Label time = new Label(j, line+1, String.valueOf(eFacts.get(line).timeSpent));
+					extensionReportSheet.addCell(time);
+				}else{
+					Label content = new Label(j, line+1, util.getCorrespChangeValue(listOfItemsHeaders.get(j) ,cFacts.get(line)).toString());
+					extensionReportSheet.addCell(content);
+				}
+			}
+//			Label label = new Label(0, i, listOfItemsHeaders.get(i));
 		}
 
 		
