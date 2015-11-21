@@ -76,28 +76,29 @@ public class WriteTable {
 		
 		/*loop for the extensions - lines*/
 		for (int line = 0; line < cFacts.size(); line++){
+			/*add name*/
+			Label extName = new Label(0, line+1, cFacts.get(line).getFormName());
+			extensionReportSheet.addCell(extName);
 			for (int j = 0; j < this.listOfItemsHeaders.size(); j++){
-				/*add name*/
-				Label extName = new Label(0, line+1, cFacts.get(line).getFormName());
-				extensionReportSheet.addCell(extName);
 				
-				if (listOfItemsHeaders.get(j).equals("DIFF REL")){
-					Label diffRel = new Label(j, line+1, String.valueOf(eFacts.get(line).difficultyGrade));
-					extensionReportSheet.addCell(diffRel);
-				}else if (listOfItemsHeaders.get(j).equals("DIFF ABS")){
-					Label diffAbs = new Label(j, line+1, String.valueOf(eFacts.get(line).absDifficultyGrade));
-					extensionReportSheet.addCell(diffAbs);
-				}else if (listOfItemsHeaders.get(j).equals("TIME")){
-					Label time = new Label(j, line+1, String.valueOf(eFacts.get(line).timeSpent));
-					extensionReportSheet.addCell(time);
-				}else{
-					Label content = new Label(j, line+1, util.getCorrespChangeValue(listOfItemsHeaders.get(j) ,cFacts.get(line)).toString());
-					extensionReportSheet.addCell(content);
+				if (!listOfItemsHeaders.get(j).equals("NAME")){
+					
+					if (listOfItemsHeaders.get(j).equals("DIFF REL")){
+						Label diffRel = new Label(j, line+1, String.valueOf(eFacts.get(line).difficultyGrade));
+						extensionReportSheet.addCell(diffRel);
+					}else if (listOfItemsHeaders.get(j).equals("DIFF ABS")){
+						Label diffAbs = new Label(j, line+1, String.valueOf(eFacts.get(line).absDifficultyGrade));
+						extensionReportSheet.addCell(diffAbs);
+					}else if (listOfItemsHeaders.get(j).equals("TIME")){
+						Label time = new Label(j, line+1, String.valueOf(eFacts.get(line).timeSpent));
+						extensionReportSheet.addCell(time);
+					}else {
+						Label content = new Label(j, line+1, util.getCorrespChangeValue(listOfItemsHeaders.get(j) ,cFacts.get(line)).toString());
+						extensionReportSheet.addCell(content);
+					}
+
 				}
 			}
-//			Label label = new Label(0, i, listOfItemsHeaders.get(i));
 		}
-
-		
 	}
 }

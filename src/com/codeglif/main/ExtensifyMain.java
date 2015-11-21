@@ -29,7 +29,8 @@ public class ExtensifyMain {
             	EvalSpecs currentExtEval = new EvalSpecs(currentExt);
             	currentExtEval.setExtensionName(currentExt.getFormName()); ;
             	listOfEvalSpecs.add(currentExtEval);
-            	currentExtEval.print();
+//            	console status print
+//            	currentExtEval.print();
             }
             
             WriteTable export = new WriteTable(formProcessing.getExtensionList(), listOfEvalSpecs);
